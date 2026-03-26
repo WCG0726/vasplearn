@@ -24,6 +24,10 @@ import GaussianInputView from '../views/GaussianInputView.vue'
 import GaussianTasksView from '../views/GaussianTasksView.vue'
 import GaussianOutputView from '../views/GaussianOutputView.vue'
 import GaussianVaspCompareView from '../views/GaussianVaspCompareView.vue'
+import GaussianParamsView from '../views/GaussianParamsView.vue'
+import GaussianVisualView from '../views/GaussianVisualView.vue'
+import GaussianFAQView from '../views/GaussianFAQView.vue'
+import GaussianGlossaryView from '../views/GaussianGlossaryView.vue'
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
@@ -47,8 +51,12 @@ const routes = [
   { path: '/gaussian', name: 'gaussian', component: GaussianView },
   { path: '/gaussian/install', name: 'gaussian-install', component: GaussianInstallView },
   { path: '/gaussian/input', name: 'gaussian-input', component: GaussianInputView },
+  { path: '/gaussian/params', name: 'gaussian-params', component: GaussianParamsView },
   { path: '/gaussian/tasks', name: 'gaussian-tasks', component: GaussianTasksView },
   { path: '/gaussian/output', name: 'gaussian-output', component: GaussianOutputView },
+  { path: '/gaussian/visual', name: 'gaussian-visual', component: GaussianVisualView },
+  { path: '/gaussian/faq', name: 'gaussian-faq', component: GaussianFAQView },
+  { path: '/gaussian/glossary', name: 'gaussian-glossary', component: GaussianGlossaryView },
   { path: '/gaussian/vasp-compare', name: 'gaussian-vasp-compare', component: GaussianVaspCompareView },
   
   // 错误诊断详情页

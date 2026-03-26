@@ -57,6 +57,11 @@
             <span class="ic">📝</span>输入文件
           </div>
         </router-link>
+        <router-link to="/gaussian/params" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">⚙️</span>参数详解
+          </div>
+        </router-link>
         <router-link to="/gaussian/tasks" custom v-slot="{ navigate, isActive }">
           <div class="sb-it" :class="{ active: isActive }" @click="navigate">
             <span class="ic">📊</span>计算任务
@@ -65,6 +70,21 @@
         <router-link to="/gaussian/output" custom v-slot="{ navigate, isActive }">
           <div class="sb-it" :class="{ active: isActive }" @click="navigate">
             <span class="ic">📋</span>输出分析
+          </div>
+        </router-link>
+        <router-link to="/gaussian/visual" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">🎨</span>可视化
+          </div>
+        </router-link>
+        <router-link to="/gaussian/faq" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">❓</span>常见问题
+          </div>
+        </router-link>
+        <router-link to="/gaussian/glossary" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">📖</span>名词解释
           </div>
         </router-link>
         <router-link to="/gaussian/vasp-compare" custom v-slot="{ navigate, isActive }">
