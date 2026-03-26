@@ -1,0 +1,2293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VASP 材料计算学习平台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #08090d;
+            --bg-primary: #0e1117;
+            --bg-surface: #161b22;
+            --bg-elevated: #1c2333;
+            --bg-hover: #222d3d;
+            --border: #2a3347;
+            --border-light: #344059;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #5a6370;
+            --accent: #e8a838;
+            --accent-dim: #c48a28;
+            --accent-glow: rgba(232,168,56,.15);
+            --green: #3fb950;
+            --green-dim: rgba(63,185,80,.15);
+            --blue: #58a6ff;
+            --blue-dim: rgba(88,166,255,.12);
+            --red: #f85149;
+            --red-dim: rgba(248,81,73,.12);
+            --purple: #bc8cff;
+            --purple-dim: rgba(188,140,255,.12);
+            --cyan: #56d4dd;
+            --cyan-dim: rgba(86,212,221,.12);
+            --orange: #f0883e;
+            --orange-dim: rgba(240,136,62,.12);
+            --font-display: 'Cormorant Garamond','Noto Serif SC',serif;
+            --font-body: 'Noto Sans SC',-apple-system,sans-serif;
+            --font-mono: 'JetBrains Mono','Consolas',monospace;
+            --sidebar-w: 280px;
+            --header-h: 64px;
+            --r: 8px;
+            --rl: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-light) var(--bg-primary)
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary)
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 3px
+        }
+
+        .hdr {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-h);
+            background: rgba(14,17,23,.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 100;
+            gap: 20px
+        }
+
+        .hdr-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            flex-shrink: 0
+        }
+
+            .hdr-logo .ico {
+                width: 36px;
+                height: 36px;
+                background: linear-gradient(135deg,var(--accent),var(--accent-dim));
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: var(--font-mono);
+                font-weight: 700;
+                font-size: 14px;
+                color: var(--bg-deep)
+            }
+
+            .hdr-logo .txt {
+                font-family: var(--font-display);
+                font-size: 22px;
+                font-weight: 700;
+                color: var(--text-primary);
+                letter-spacing: .5px
+            }
+
+                .hdr-logo .txt span {
+                    color: var(--accent)
+                }
+
+        .hdr-nav {
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+            flex-wrap: wrap
+        }
+
+            .hdr-nav button {
+                background: none;
+                border: none;
+                color: var(--text-secondary);
+                font-family: var(--font-body);
+                font-size: 13px;
+                font-weight: 500;
+                padding: 8px 12px;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all .2s;
+                white-space: nowrap
+            }
+
+                .hdr-nav button:hover {
+                    color: var(--text-primary);
+                    background: var(--bg-hover)
+                }
+
+                .hdr-nav button.active {
+                    color: var(--accent);
+                    background: var(--accent-glow)
+                }
+
+        .mtog {
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            align-items: center;
+            justify-content: center
+        }
+
+        .sb {
+            position: fixed;
+            top: var(--header-h);
+            left: 0;
+            width: var(--sidebar-w);
+            height: calc(100vh - var(--header-h));
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 16px 0;
+            z-index: 90;
+            transition: transform .3s
+        }
+
+        .sb-sec {
+            padding: 0 16px;
+            margin-bottom: 8px
+        }
+
+        .sb-lbl {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-muted);
+            padding: 12px 12px 6px
+        }
+
+        .sb-it {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all .15s;
+            color: var(--text-secondary);
+            font-size: 13.5px;
+            user-select: none
+        }
+
+            .sb-it:hover {
+                background: var(--bg-hover);
+                color: var(--text-primary)
+            }
+
+            .sb-it.active {
+                background: var(--accent-glow);
+                color: var(--accent);
+                font-weight: 500
+            }
+
+            .sb-it .ic {
+                width: 20px;
+                text-align: center;
+                font-size: 14px;
+                flex-shrink: 0
+            }
+
+            .sb-it .bd {
+                margin-left: auto;
+                font-size: 10px;
+                font-weight: 600;
+                padding: 2px 6px;
+                border-radius: 10px
+            }
+
+        .bd-new {
+            background: var(--accent-glow);
+            color: var(--accent)
+        }
+
+        .bd-hot {
+            background: var(--red-dim);
+            color: var(--red)
+        }
+
+        .bd-base {
+            background: var(--green-dim);
+            color: var(--green)
+        }
+
+        .mn {
+            margin-left: var(--sidebar-w);
+            margin-top: var(--header-h);
+            min-height: calc(100vh - var(--header-h))
+        }
+
+        .sec {
+            display: none;
+            padding: 40px 48px 80px;
+            max-width: 960px;
+            animation: fi .3s ease
+        }
+
+            .sec.active {
+                display: block
+            }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .hero {
+            padding: 60px 48px 40px;
+            max-width: 960px;
+            display: none
+        }
+
+            .hero.active {
+                display: block;
+                animation: fi .4s ease
+            }
+
+        .hero-t {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg,var(--text-primary) 40%,var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .hero-s {
+            font-size: 17px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            max-width: 640px;
+            margin-bottom: 40px
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+            gap: 16px;
+            margin-bottom: 48px
+        }
+
+        .stat {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--rl);
+            padding: 20px;
+            transition: all .2s
+        }
+
+            .stat:hover {
+                border-color: var(--border-light);
+                transform: translateY(-2px)
+            }
+
+        .stat-n {
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1
+        }
+
+        .stat-l {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 6px
+        }
+
+        .sec h2 {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            padding-top: 12px
+        }
+
+        .sec h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 36px;
+            margin-bottom: 12px
+        }
+
+        .sec h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 8px;
+            color: var(--accent)
+        }
+
+        .sec p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 14.5px;
+            line-height: 1.8
+        }
+
+        .sec ul, .sec ol {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            padding-left: 24px;
+            font-size: 14.5px
+        }
+
+        .sec li {
+            margin-bottom: 6px;
+            line-height: 1.7
+        }
+
+        .sec strong {
+            color: var(--text-primary);
+            font-weight: 600
+        }
+
+        .stitle {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px
+        }
+
+        .sdesc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 28px
+        }
+
+        .bread {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap
+        }
+
+            .bread a {
+                color: var(--text-secondary);
+                text-decoration: none
+            }
+
+                .bread a:hover {
+                    color: var(--accent)
+                }
+
+        .pg {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(270px,1fr));
+            gap: 16px;
+            margin-bottom: 48px
+        }
+
+        .pc {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--rl);
+            padding: 24px;
+            cursor: pointer;
+            transition: all .25s;
+            position: relative;
+            overflow: hidden
+        }
+
+            .pc::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: var(--ca,var(--accent));
+                opacity: 0;
+                transition: opacity .25s
+            }
+
+            .pc:hover {
+                border-color: var(--border-light);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 24px rgba(0,0,0,.3)
+            }
+
+                .pc:hover::before {
+                    opacity: 1
+                }
+
+        .pc-i {
+            font-size: 28px;
+            margin-bottom: 12px
+        }
+
+        .pc-t {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px
+        }
+
+        .pc-d {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6
+        }
+
+        .pc-m {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-muted)
+        }
+
+        .cb {
+            position: relative;
+            margin: 16px 0 24px;
+            border-radius: var(--r);
+            overflow: hidden;
+            border: 1px solid var(--border)
+        }
+
+        .ch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--text-muted)
+        }
+
+            .ch .la {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: .5px
+            }
+
+            .ch .fn {
+                font-family: var(--font-mono);
+                font-size: 12px;
+                color: var(--text-secondary)
+            }
+
+        .cpb {
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: all .15s
+        }
+
+            .cpb:hover {
+                color: var(--text-primary);
+                border-color: var(--border-light)
+            }
+
+            .cpb.ok {
+                color: var(--green);
+                border-color: var(--green)
+            }
+
+        pre {
+            padding: 16px;
+            overflow-x: auto;
+            background: var(--bg-surface);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.65;
+            color: var(--text-secondary)
+        }
+
+            pre code {
+                font-family: inherit
+            }
+
+        .kw {
+            color: var(--purple)
+        }
+
+        .st {
+            color: var(--green)
+        }
+
+        .nu {
+            color: var(--cyan)
+        }
+
+        .cm {
+            color: var(--text-muted);
+            font-style: italic
+        }
+
+        .fn2 {
+            color: var(--blue)
+        }
+
+        .vr {
+            color: var(--accent)
+        }
+
+        .ic {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            background: var(--bg-elevated);
+            padding: 2px 7px;
+            border-radius: 4px;
+            color: var(--accent);
+            border: 1px solid var(--border)
+        }
+
+        .ib {
+            padding: 16px 20px;
+            border-radius: var(--r);
+            margin: 16px 0;
+            font-size: 13.5px;
+            line-height: 1.7;
+            border-left: 3px solid
+        }
+
+            .ib.tip {
+                background: var(--green-dim);
+                border-color: var(--green);
+                color: var(--text-secondary)
+            }
+
+                .ib.tip strong {
+                    color: var(--green)
+                }
+
+            .ib.warn {
+                background: rgba(232,168,56,.08);
+                border-color: var(--accent);
+                color: var(--text-secondary)
+            }
+
+                .ib.warn strong {
+                    color: var(--accent)
+                }
+
+            .ib.note {
+                background: var(--blue-dim);
+                border-color: var(--blue);
+                color: var(--text-secondary)
+            }
+
+                .ib.note strong {
+                    color: var(--blue)
+                }
+
+            .ib.err {
+                background: var(--red-dim);
+                border-color: var(--red);
+                color: var(--text-secondary)
+            }
+
+                .ib.err strong {
+                    color: var(--red)
+                }
+
+        .tb {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 24px;
+            font-size: 13.5px
+        }
+
+            .tb th {
+                text-align: left;
+                padding: 10px 16px;
+                background: var(--bg-elevated);
+                border: 1px solid var(--border);
+                font-weight: 600;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: .5px;
+                color: var(--text-secondary)
+            }
+
+            .tb td {
+                padding: 10px 16px;
+                border: 1px solid var(--border);
+                color: var(--text-secondary)
+            }
+
+            .tb tr:hover td {
+                background: var(--bg-hover)
+            }
+
+            .tb code {
+                font-family: var(--font-mono);
+                font-size: 12.5px;
+                color: var(--accent);
+                background: var(--bg-elevated);
+                padding: 1px 5px;
+                border-radius: 3px
+            }
+
+        .qb {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--rl);
+            margin: 24px 0;
+            overflow: hidden
+        }
+
+        .qh {
+            padding: 16px 20px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+            .qh .ql {
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: .8px;
+                color: var(--accent)
+            }
+
+            .qh .qt {
+                font-size: 14px;
+                font-weight: 500
+            }
+
+        .qbd {
+            padding: 20px
+        }
+
+            .qbd p {
+                font-size: 14px;
+                margin-bottom: 16px
+            }
+
+        .qo {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all .15s;
+            font-size: 13.5px;
+            color: var(--text-secondary)
+        }
+
+            .qo:hover {
+                border-color: var(--border-light);
+                background: var(--accent-glow)
+            }
+
+            .qo.ok {
+                border-color: var(--green);
+                background: var(--green-dim)
+            }
+
+            .qo.no {
+                border-color: var(--red);
+                background: var(--red-dim)
+            }
+
+        .qr {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all .15s;
+            position: relative
+        }
+
+        .qo.sel .qr {
+            border-color: var(--accent)
+        }
+
+            .qo.sel .qr::after {
+                content: '';
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--accent)
+            }
+
+        .qf {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 13.5px;
+            display: none
+        }
+
+            .qf.show {
+                display: block;
+                animation: fi .2s ease
+            }
+
+        .qs {
+            background: var(--accent);
+            color: var(--bg-deep);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all .15s
+        }
+
+            .qs:hover {
+                background: var(--accent-dim)
+            }
+
+            .qs:disabled {
+                opacity: .4;
+                cursor: not-allowed
+            }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            margin: 20px 0 0
+        }
+
+        .tbtn {
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: all .15s
+        }
+
+            .tbtn:hover {
+                color: var(--text-primary)
+            }
+
+            .tbtn.active {
+                color: var(--accent);
+                border-bottom-color: var(--accent)
+            }
+
+        .tc {
+            display: none;
+            padding: 20px 0
+        }
+
+            .tc.active {
+                display: block;
+                animation: fi .2s ease
+            }
+
+        .fc {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            margin: 24px 0
+        }
+
+        .fn2-node {
+            padding: 14px 28px;
+            border-radius: var(--r);
+            font-size: 13.5px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 220px;
+            border: 1px solid
+        }
+
+            .fn2-node.s {
+                background: var(--accent-glow);
+                border-color: var(--accent);
+                color: var(--accent);
+                border-radius: 20px
+            }
+
+            .fn2-node.p {
+                background: var(--bg-surface);
+                border-color: var(--border-light);
+                color: var(--text-primary)
+            }
+
+            .fn2-node.e {
+                background: var(--green-dim);
+                border-color: var(--green);
+                color: var(--green);
+                border-radius: 20px
+            }
+
+        .fa {
+            width: 2px;
+            height: 24px;
+            background: var(--border-light);
+            position: relative
+        }
+
+            .fa::after {
+                content: '▼';
+                position: absolute;
+                bottom: -8px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 8px;
+                color: var(--border-light)
+            }
+
+        .fb {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 20px;
+            margin: 16px 0;
+            text-align: center;
+            font-size: 15px;
+            line-height: 2
+        }
+
+            .fb .fm {
+                font-size: 18px;
+                font-weight: 500;
+                margin-bottom: 4px
+            }
+
+            .fb .fd {
+                font-size: 12px;
+                color: var(--text-muted)
+            }
+
+        .db {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--rl);
+            padding: 24px;
+            margin: 20px 0
+        }
+
+        .db-t {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            margin-bottom: 16px
+        }
+
+        .ec {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--rl);
+            margin: 16px 0;
+            overflow: hidden;
+            transition: all .2s
+        }
+
+            .ec:hover {
+                border-color: var(--border-light)
+            }
+
+        .ec-h {
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background .15s
+        }
+
+            .ec-h:hover {
+                background: var(--bg-hover)
+            }
+
+            .ec-h .ei {
+                font-size: 20px;
+                flex-shrink: 0
+            }
+
+            .ec-h .et {
+                font-weight: 600;
+                font-size: 14.5px;
+                flex: 1
+            }
+
+            .ec-h .es {
+                font-size: 11px;
+                font-weight: 600;
+                padding: 3px 8px;
+                border-radius: 10px;
+                text-transform: uppercase;
+                letter-spacing: .5px
+            }
+
+        .sc {
+            background: var(--red-dim);
+            color: var(--red)
+        }
+
+        .scm {
+            background: var(--accent-glow);
+            color: var(--accent)
+        }
+
+        .smn {
+            background: var(--blue-dim);
+            color: var(--blue)
+        }
+
+        .ec-h .ex {
+            color: var(--text-muted);
+            transition: transform .2s;
+            font-size: 12px
+        }
+
+        .ec.open .ex {
+            transform: rotate(180deg)
+        }
+
+        .ec-b {
+            display: none;
+            padding: 0 20px 20px;
+            border-top: 1px solid var(--border)
+        }
+
+        .ec.open .ec-b {
+            display: block;
+            animation: fi .2s ease
+        }
+
+        .esym {
+            margin: 16px 0;
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 12.5px;
+            line-height: 1.7;
+            color: var(--red);
+            border-left: 3px solid var(--red)
+        }
+
+        .ft {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 16px;
+            margin: 16px 0;
+            font-family: var(--font-mono);
+            font-size: 13px
+        }
+
+        .ft-i {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: var(--text-secondary)
+        }
+
+        @media(max-width:900px) {
+            .sb {
+                transform: translateX(-100%)
+            }
+
+                .sb.open {
+                    transform: translateX(0);
+                    box-shadow: 4px 0 20px rgba(0,0,0,.5)
+                }
+
+            .mn {
+                margin-left: 0
+            }
+
+            .sec, .hero {
+                padding: 24px 20px 60px
+            }
+
+            .hero-t {
+                font-size: 32px
+            }
+
+            .mtog {
+                display: flex
+            }
+
+            .hdr-nav {
+                display: none
+            }
+
+            .pg {
+                grid-template-columns: 1fr
+            }
+
+            .stats {
+                grid-template-columns: repeat(2,1fr)
+            }
+        }
+
+        @media(max-width:600px) {
+            .stats {
+                grid-template-columns: 1fr
+            }
+
+            .hero-t {
+                font-size: 28px
+            }
+        }
+
+        .sbov {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.5);
+            z-index: 85
+        }
+
+            .sbov.show {
+                display: block
+            }
+    </style>
+</head>
+<body>
+    <header class="hdr">
+        <button class="mtog" onclick="togSB()">☰</button>
+        <div class="hdr-logo" onclick="go('home')"><div class="ico">V</div><div class="txt"><span>VASP</span>Learn</div></div>
+        <nav class="hdr-nav" id="hdrNav">
+            <button class="active" onclick="go('home')">首页</button>
+            <button onclick="go('theory')">理论</button>
+            <button onclick="go('input')">输入文件</button>
+            <button onclick="go('output')">结果分析</button>
+            <button onclick="go('errors')">错误诊断</button>
+            <button onclick="go('tools')">工具</button>
+        </nav>
+    </header>
+    <div class="sbov" id="sbOv" onclick="togSB()"></div>
+    <aside class="sb" id="sidebar">
+        <div class="sb-sec">
+            <div class="sb-lbl">入门指南</div>
+            <div class="sb-it active" onclick="go('theory')"><span class="ic">📐</span>理论基础</div>
+            <div class="sb-it" onclick="go('input')"><span class="ic">📁</span>输入文件</div>
+            <div class="sb-it" onclick="go('tasks')"><span class="ic">📊</span>计算任务</div>
+            <div class="sb-it" onclick="go('surface')"><span class="ic">🧊</span>表面计算<span class="bd bd-new">NEW</span></div>
+            <div class="sb-it" onclick="go('defect')"><span class="ic">💎</span>缺陷计算<span class="bd bd-new">NEW</span></div>
+            <div class="sb-it" onclick="go('phonon')"><span class="ic">🔊</span>声子计算<span class="bd bd-new">NEW</span></div>
+        </div>
+        <div class="sb-sec">
+            <div class="sb-lbl">结果分析</div>
+            <div class="sb-it" onclick="go('output')"><span class="ic">📋</span>输出文件</div>
+            <div class="sb-it" onclick="go('convergence')"><span class="ic">🎯</span>收敛性测试</div>
+        </div>
+        <div class="sb-sec">
+            <div class="sb-lbl">错误诊断</div>
+            <div class="sb-it" onclick="go('errors')"><span class="ic">🚨</span>诊断总览<span class="bd bd-hot">重要</span></div>
+            <div class="sb-it" onclick="go('err-scf')"><span class="ic">⚡</span>SCF 不收敛<span class="bd bd-hot">高频</span></div>
+            <div class="sb-it" onclick="go('err-ion')"><span class="ic">💥</span>离子步问题</div>
+            <div class="sb-it" onclick="go('err-memory')"><span class="ic">💾</span>内存与性能</div>
+            <div class="sb-it" onclick="go('err-files')"><span class="ic">📂</span>文件错误</div>
+            <div class="sb-it" onclick="go('err-output')"><span class="ic">🔍</span>输出异常</div>
+        </div>
+        <div class="sb-sec">
+            <div class="sb-lbl">工具与资源</div>
+            <div class="sb-it" onclick="go('tools')"><span class="ic">🛠️</span>辅助工具</div>
+            <div class="sb-it" onclick="go('cheatsheet')"><span class="ic">📝</span>速查手册</div>
+        </div>
+    </aside>
+    <main class="mn">
+
+        <!-- HOME -->
+        <div class="hero active" id="s-home">
+            <h1 class="hero-t">VASP 材料计算<br>学习平台</h1>
+            <p class="hero-s">从密度泛函理论到第一性原理计算，系统掌握 VASP 的使用方法。包含基础教程、进阶计算任务和完整的错误诊断系统。</p>
+            <div class="stats">
+                <div class="stat"><div class="stat-n">15</div><div class="stat-l">核心知识点</div></div>
+                <div class="stat"><div class="stat-n">8</div><div class="stat-l">计算任务教程</div></div>
+                <div class="stat"><div class="stat-n">20+</div><div class="stat-l">错误诊断方案</div></div>
+                <div class="stat"><div class="stat-n">∞</div><div class="stat-l">可探索的材料</div></div>
+            </div>
+            <h2 class="stitle">学习路径</h2>
+            <p class="sdesc">按照推荐顺序学习，循序渐进地掌握材料计算</p>
+            <div class="pg">
+                <div class="pc" style="--ca:var(--blue)" onclick="go('theory')"><div class="pc-i">📐</div><div class="pc-t">理论基础</div><div class="pc-d">密度泛函理论、赝势方法、平面波基组</div><div class="pc-m"><span>⏱ 约 2h</span><span>📖 3 章节</span></div></div>
+                <div class="pc" style="--ca:var(--green)" onclick="go('input')"><div class="pc-i">📁</div><div class="pc-t">输入文件</div><div class="pc-d">INCAR、POSCAR、KPOINTS、POTCAR 四大核心文件</div><div class="pc-m"><span>⏱ 约 3h</span><span>📖 4 章节</span></div></div>
+                <div class="pc" style="--ca:var(--purple)" onclick="go('tasks')"><div class="pc-i">📊</div><div class="pc-t">基础计算</div><div class="pc-d">结构优化、态密度、能带结构</div><div class="pc-m"><span>⏱ 约 4h</span><span>📖 3 章节</span></div></div>
+                <div class="pc" style="--ca:var(--cyan)" onclick="go('surface')"><div class="pc-i">🧊</div><div class="pc-t">进阶计算</div><div class="pc-d">表面、吸附能、形成能、缺陷、声子</div><div class="pc-m"><span>⏱ 约 6h</span><span>📖 5 章节</span></div></div>
+                <div class="pc" style="--ca:var(--red)" onclick="go('errors')"><div class="pc-i">🚨</div><div class="pc-t">错误诊断</div><div class="pc-d">SCF 不收敛、内存溢出、文件错误等</div><div class="pc-m"><span>⏱ 按需查阅</span><span>📖 5 类问题</span></div></div>
+                <div class="pc" style="--ca:var(--accent)" onclick="go('tools')"><div class="pc-i">🛠️</div><div class="pc-t">工具与速查</div><div class="pc-d">VESTA、VASPKIT、pymatgen 等辅助工具</div><div class="pc-m"><span>⏱ 约 1h</span></div></div>
+            </div>
+            <h2 class="stitle">VASP 计算流程</h2>
+            <div class="fc">
+                <div class="fn2-node s">🧱 确定材料结构</div><div class="fa"></div>
+                <div class="fn2-node p">📝 编写 POSCAR</div><div class="fa"></div>
+                <div class="fn2-node p">⚛️ 准备 POTCAR</div><div class="fa"></div>
+                <div class="fn2-node p">🔲 设置 KPOINTS</div><div class="fa"></div>
+                <div class="fn2-node p">⚙️ 配置 INCAR</div><div class="fa"></div>
+                <div class="fn2-node p">🚀 提交计算</div><div class="fa"></div>
+                <div class="fn2-node p">🔍 检查收敛</div><div class="fa"></div>
+                <div class="fn2-node e">✅ 提取物理量</div>
+            </div>
+        </div>
+
+        <!-- THEORY -->
+        <div class="sec" id="s-theory">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<span>理论基础</span></div>
+            <h2>DFT 基本原理</h2>
+            <p>密度泛函理论（DFT）是 VASP 的理论基石。</p>
+            <h3>1. Hohenberg-Kohn 定理</h3>
+            <ul><li><strong>第一定理：</strong>多电子体系的基态性质由电子密度 n(r) 唯一确定</li><li><strong>第二定理：</strong>基态能量可通过能量泛函 E[n] 对密度的变分得到</li></ul>
+            <div class="ib note"><strong>核心思想：</strong>将求解 3N 维波函数的问题简化为求解 3 维电子密度，大幅降低计算复杂度。</div>
+            <h3>2. Kohn-Sham 方程</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">公式</span></div><pre><code>⎡ -∇²/2 + V_eff(r) ⎤ φᵢ(r) = εᵢ φᵢ(r)
+⎣                   ⎦
+
+V_eff(r) = V_ext(r) + V_H(r) + V_xc(r)
+
+- V_ext(r) ：外势（原子核产生的势）
+- V_H(r)   ：Hartree 势（经典库仑作用）
+- V_xc(r)  ：交换关联势（量子效应）</code></pre>
+            </div>
+            <h3>3. 自洽场（SCF）迭代</h3>
+            <div class="fc">
+                <div class="fn2-node s">猜测初始电子密度 n(r)</div><div class="fa"></div>
+                <div class="fn2-node p">构建有效势 V_eff(r)</div><div class="fa"></div>
+                <div class="fn2-node p">求解 Kohn-Sham 方程 → φᵢ, εᵢ</div><div class="fa"></div>
+                <div class="fn2-node p">计算新密度 n_new(r)</div><div class="fa"></div>
+                <div class="fn2-node p">判断收敛 |n_new - n_old| < ε ?</div><div class="fa"></div>
+                <div class="fn2-node e">输出基态能量和电子结构</div>
+            </div>
+            <h3>4. 交换关联泛函</h3>
+            <table class="tb">
+                <thead><tr><th>层级</th><th>名称</th><th>精度</th><th>成本</th><th>适用</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>LDA</strong></td><td>局域密度近似</td><td>一般</td><td>低</td><td>金属晶格常数</td></tr>
+                    <tr><td><strong>GGA</strong></td><td>广义梯度近似</td><td>较好</td><td>低</td><td>最常用（PBE）</td></tr>
+                    <tr><td><strong>杂化</strong></td><td>HSE06/PBE0</td><td>很好</td><td>高</td><td>带隙</td></tr>
+                    <tr><td><strong>GW</strong></td><td>多体微扰</td><td>极好</td><td>极高</td><td>准粒子能带</td></tr>
+                </tbody>
+            </table>
+            <div class="ib tip"><strong>建议：</strong>初学者从 <code class="ic">PBE</code> 开始，VASP 中通过 POTCAR 文件控制（PAW_PBE 对应 PBE）。</div>
+            <div class="qb">
+                <div class="qh"><span class="ql">练习</span><span class="qt">检验理解</span></div><div class="qbd">
+                    <p><strong>问题：</strong>DFT 将求解多体波函数简化为什么？</p>
+                    <div class="qo" onclick="selQ(this,'q1')"><div class="qr"></div><span>电子能级 εᵢ</span></div>
+                    <div class="qo" onclick="selQ(this,'q1')"><div class="qr"></div><span>电子密度 n(r)</span></div>
+                    <div class="qo" onclick="selQ(this,'q1')"><div class="qr"></div><span>原子核位置 Rₙ</span></div>
+                    <div class="qo" onclick="selQ(this,'q1')"><div class="qr"></div><span>交换关联能 E_xc</span></div>
+                    <div id="q1-fb" class="qf"></div>
+                    <button class="qs" id="q1-s" onclick="chkQ('q1',1)">提交答案</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PSEUDOPOTENTIAL -->
+        <div class="sec" id="s-pseudopotential">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('theory')">理论基础</a>/<span>赝势与基组</span></div>
+            <h2>赝势与平面波基组</h2>
+            <p>赝势方法将芯电子"冻结"，只处理价电子，大幅降低计算成本。VASP 使用 <strong>PAW（投影缀加波）</strong>方法。</p>
+            <div class="ib note"><strong>PAW 优势：</strong>比超软赝势更精确，比全电子计算更高效，是目前最主流的方法。</div>
+            <h3>POTCAR 中的重要信息</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">POTCAR</span></div><pre><code><span class="vr">TITEL</span>  = <span class="st">PAW_PBE Si 05Jan2001</span>   <span class="cm">; 赝势类型和元素</span>
+<span class="vr">ENMAX</span>  = <span class="nu">  249.570</span>              <span class="cm">; 推荐截断能</span>
+<span class="vr">ZVAL</span>   = <span class="nu">    4.000</span>              <span class="cm">; 价电子数</span>
+<span class="cm">; Si: 3s² 3p² → 4个价电子</span></code></pre>
+            </div>
+            <h3>赝势选择指南</h3>
+            <table class="tb">
+                <thead><tr><th>类型</th><th>适用场景</th><th>说明</th></tr></thead>
+                <tbody>
+                    <tr><td><code>PAW_PBE</code></td><td>常规计算（最常用）</td><td>GGA-PBE 泛函</td></tr>
+                    <tr><td><code>PAW_LDA</code></td><td>LDA 泛函</td><td>较少使用</td></tr>
+                    <tr><td><code>_sv</code> 后缀</td><td>半芯态重要的体系</td><td>如 3d 过渡金属</td></tr>
+                    <tr><td><code>_GW</code> 后缀</td><td>GW 计算</td><td>精度最高</td></tr>
+                    <tr><td><code>_d</code> 后缀</td><td>含 d 电子的 p 区元素</td><td>如 Ga, Ge, As</td></tr>
+                </tbody>
+            </table>
+            <div class="ib tip"><strong>建议：</strong>初学者统一使用 <code class="ic">PAW_PBE</code> 赝势。对于过渡金属，考虑使用 <code class="ic">_sv</code> 版本以获得更精确的结果。</div>
+        </div>
+
+        <!-- KPOINT THEORY -->
+        <div class="sec" id="s-kpoint">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('theory')">理论基础</a>/<span>K 点采样</span></div>
+            <h2>K 点采样原理</h2>
+            <p>在周期性体系中，电子波函数满足布洛赫定理，需要在倒空间（k 空间）进行积分。</p>
+            <div class="fb"><div class="fm">⟨O⟩ = (1/Nₖ) × Σ wₖ × O(kₖ)</div><div class="fd">离散 k 点求和代替布里渊区积分</div></div>
+            <div class="ib note"><strong>物理意义：</strong>更多的 k 点意味着对布里渊区更精细的采样，但计算成本也线性增加。</div>
+            <h3>K 点密度经验公式</h3>
+            <div class="ib tip"><strong>经验法则：</strong><code class="ic">N_k × a ≈ 30</code>（a 为晶格常数，单位 Å）<br>例如 a = 5.43 Å → N_k ≈ 30/5.43 ≈ 6 → 使用 6×6×6 网格</div>
+        </div>
+
+        <!-- INPUT -->
+        <div class="sec" id="s-input">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<span>输入文件</span></div>
+            <h2>VASP 输入文件总览</h2>
+            <p>VASP 需要 <strong>4 个核心输入文件</strong>。</p>
+            <div class="ft">
+                <div class="ft-i"><span style="color:var(--blue)">📄</span> INCAR — 控制参数</div>
+                <div class="ft-i"><span style="color:var(--green)">📄</span> POSCAR — 晶体结构</div>
+                <div class="ft-i"><span style="color:var(--purple)">📄</span> KPOINTS — k 点网格</div>
+                <div class="ft-i"><span style="color:var(--red)">📄</span> POTCAR — 赝势文件</div>
+            </div>
+            <div class="ib warn"><strong>注意：</strong>POTCAR 中元素的顺序必须与 POSCAR 中的元素顺序一致！</div>
+            <div class="pg">
+                <div class="pc" style="--ca:var(--blue)" onclick="go('incar')"><div class="pc-i">⚙️</div><div class="pc-t">INCAR 详解</div><div class="pc-d">最核心的控制文件</div></div>
+                <div class="pc" style="--ca:var(--green)" onclick="go('poscar')"><div class="pc-i">🔬</div><div class="pc-t">POSCAR 结构</div><div class="pc-d">晶体结构描述</div></div>
+                <div class="pc" style="--ca:var(--purple)" onclick="go('kpoints')"><div class="pc-i">🎯</div><div class="pc-t">KPOINTS 设置</div><div class="pc-d">k 点网格选择</div></div>
+            </div>
+        </div>
+
+        <!-- INCAR -->
+        <div class="sec" id="s-incar">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('input')">输入文件</a>/<span>INCAR</span></div>
+            <h2>INCAR 文件详解</h2>
+            <div class="cb">
+                <div class="ch"><span class="la">INCAR</span><span class="fn">结构优化示例</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">SYSTEM</span>   = <span class="st">Si bulk optimization</span>
+<span class="kw">ENCUT</span>    = <span class="nu">400</span>
+<span class="kw">PREC</span>     = <span class="st">Accurate</span>
+<span class="kw">EDIFF</span>    = <span class="nu">1E-6</span>
+<span class="kw">IBRION</span>   = <span class="nu">2</span>
+<span class="kw">NSW</span>      = <span class="nu">100</span>
+<span class="kw">ISIF</span>     = <span class="nu">3</span>
+<span class="kw">ISMEAR</span>   = <span class="nu">0</span>
+<span class="kw">SIGMA</span>    = <span class="nu">0.05</span></code></pre>
+            </div>
+            <div class="tabs">
+                <button class="tbtn active" onclick="sTab(this,'tab-en')">截断能</button>
+                <button class="tbtn" onclick="sTab(this,'tab-io')">离子弛豫</button>
+                <button class="tbtn" onclick="sTab(this,'tab-sm')">展宽方法</button>
+            </div>
+            <div class="tc active" id="tab-en">
+                <h4>平面波截断能 (ENCUT)</h4>
+                <table class="tb">
+                    <thead><tr><th>参数</th><th>说明</th><th>建议值</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>ENCUT</code></td><td>截断能 (eV)</td><td>POTCAR ENMAX 的 1.3 倍</td></tr>
+                        <tr><td><code>PREC</code></td><td>精度</td><td><code>Accurate</code></td></tr>
+                    </tbody>
+                </table>
+                <div class="ib tip"><strong>确定方法：</strong><code class="ic">grep ENMAX POTCAR</code>，设 <code class="ic">ENCUT = 1.3 × ENMAX(max)</code></div>
+            </div>
+            <div class="tc" id="tab-io">
+                <h4>离子弛豫参数</h4>
+                <table class="tb">
+                    <thead><tr><th>参数</th><th>值</th><th>说明</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="3"><code>IBRION</code></td><td><code>-1</code></td><td>不动（静态）</td></tr>
+                        <tr><td><code>2</code></td><td>CG 方法（推荐）</td></tr>
+                        <tr><td><code>1</code></td><td>准牛顿 RMM-DIIS</td></tr>
+                        <tr><td rowspan="3"><code>ISIF</code></td><td><code>2</code></td><td>只优化离子</td></tr>
+                        <tr><td><code>3</code></td><td>优化离子+晶格</td></tr>
+                        <tr><td><code>4</code></td><td>优化离子+形状（体积固定）</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tc" id="tab-sm">
+                <h4>展宽方法 (ISMEAR)</h4>
+                <table class="tb">
+                    <thead><tr><th>ISMEAR</th><th>方法</th><th>适用</th><th>SIGMA</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>-5</code></td><td>四面体</td><td>绝缘体/半导体 DOS</td><td>自动</td></tr>
+                        <tr><td><code>0</code></td><td>Gaussian</td><td>半导体/绝缘体</td><td>0.05</td></tr>
+                        <tr><td><code>1</code></td><td>MP</td><td>金属</td><td>0.2</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- POSCAR -->
+        <div class="sec" id="s-poscar">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('input')">输入文件</a>/<span>POSCAR</span></div>
+            <h2>POSCAR 结构文件</h2>
+            <div class="cb">
+                <div class="ch"><span class="la">POSCAR</span><span class="fn">Si 金刚石</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="vr">Si diamond</span>                    <span class="cm">; 注释</span>
+<span class="nu">1.0</span>                           <span class="cm">; 缩放因子</span>
+<span class="nu">5.43  0.00  0.00</span>             <span class="cm">; 晶格矢量</span>
+<span class="nu">0.00  5.43  0.00</span>
+<span class="nu">0.00  0.00  5.43</span>
+<span class="vr">Si</span>                             <span class="cm">; 元素</span>
+<span class="nu">2</span>                              <span class="cm">; 原子数</span>
+<span class="kw">Direct</span>                         <span class="cm">; 坐标类型</span>
+<span class="nu">0.00  0.00  0.00</span>
+<span class="nu">0.25  0.25  0.25</span></code></pre>
+            </div>
+            <table class="tb">
+                <thead><tr><th>关键字</th><th>含义</th><th>场景</th></tr></thead>
+                <tbody>
+                    <tr><td><code>Direct</code></td><td>分数坐标（0~1）</td><td>最常用</td></tr>
+                    <tr><td><code>Cartesian</code></td><td>笛卡尔坐标（Å）</td><td>分子/团簇</td></tr>
+                </tbody>
+            </table>
+            <h3>选择性动力学</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">POSCAR</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">Selective dynamics</span>            <span class="cm">; 开启</span>
+<span class="kw">Direct</span>
+<span class="nu">0.00  0.00  0.00</span>  <span class="st">F F F</span>   <span class="cm">; 固定</span>
+<span class="nu">0.25  0.25  0.25</span>  <span class="st">T T T</span>   <span class="cm">; 可动</span>
+<span class="cm">; F=Fixed, T=True (x,y,z)</span></code></pre>
+            </div>
+        </div>
+
+        <!-- KPOINTS -->
+        <div class="sec" id="s-kpoints">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('input')">输入文件</a>/<span>KPOINTS</span></div>
+            <h2>KPOINTS 文件设置</h2>
+            <div class="cb">
+                <div class="ch"><span class="la">KPOINTS</span><span class="fn">Gamma 中心</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="vr">Automatic mesh</span>
+<span class="nu">0</span>
+<span class="kw">Gamma</span>
+<span class="nu">4  4  4</span>
+<span class="nu">0.0  0.0  0.0</span></code></pre>
+            </div>
+            <div class="ib tip"><strong>经验公式：</strong><code class="ic">N_k × a ≈ 30</code>（a 为晶格常数 Å）</div>
+            <table class="tb">
+                <thead><tr><th>材料</th><th>推荐 k 点</th></tr></thead>
+                <tbody>
+                    <tr><td>金属</td><td><code>8×8×8</code> 或更密</td></tr>
+                    <tr><td>半导体</td><td><code>4×4×4</code> ~ <code>6×6×6</code></td></tr>
+                    <tr><td>绝缘体</td><td><code>3×3×3</code> ~ <code>4×4×4</code></td></tr>
+                    <tr><td>表面/slab</td><td><code>k×k×1</code></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- TASKS -->
+        <div class="sec" id="s-tasks">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<span>计算任务</span></div>
+            <h2>计算任务总览</h2>
+            <h3>基础计算</h3>
+            <div class="pg">
+                <div class="pc" style="--ca:var(--blue)" onclick="go('relax')"><div class="pc-i">🔄</div><div class="pc-t">结构优化</div><div class="pc-d">弛豫原子位置和晶格参数</div></div>
+                <div class="pc" style="--ca:var(--green)" onclick="go('dos')"><div class="pc-i">📈</div><div class="pc-t">态密度 DOS</div><div class="pc-d">电子态在能量上的分布</div></div>
+                <div class="pc" style="--ca:var(--purple)" onclick="go('band')"><div class="pc-i">📉</div><div class="pc-t">能带结构</div><div class="pc-d">沿高对称路径的能带色散</div></div>
+            </div>
+            <h3>进阶计算</h3>
+            <div class="pg">
+                <div class="pc" style="--ca:var(--cyan)" onclick="go('surface')"><div class="pc-i">🧊</div><div class="pc-t">表面模型</div><div class="pc-d">slab 模型与表面能</div></div>
+                <div class="pc" style="--ca:var(--orange)" onclick="go('adsorption')"><div class="pc-i">🧲</div><div class="pc-t">吸附能计算</div><div class="pc-d">分子/原子在表面的吸附</div></div>
+                <div class="pc" style="--ca:var(--green)" onclick="go('formation')">
+                    <div class="pc-i">🧪</div><div class="pc-t">形成能计算</div>
+                    <div class="pc-d">化合物的热力学稳定性</div>
+                </div>
+                <div class="pc" style="--ca:var(--accent)" onclick="go('defect')"><div class="pc-i">💎</div><div class="pc-t">缺陷计算</div><div class="pc-d">点缺陷形成能与电荷态</div></div>
+                <div class="pc" style="--ca:var(--purple)" onclick="go('phonon')"><div class="pc-i">🔊</div><div class="pc-t">声子计算</div><div class="pc-d">晶格动力学与稳定性</div></div>
+            </div>
+        </div>
+
+        <!-- DOS -->
+        <div class="sec" id="s-dos">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('tasks')">计算任务</a>/<span>态密度</span></div>
+            <h2>态密度计算</h2>
+            <p>分两步：① 结构优化 ② 静态计算（密集 k 点）</p>
+            <div class="cb">
+                <div class="ch"><span class="la">INCAR</span><span class="fn">Si DOS</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">SYSTEM</span>   = <span class="st">Si DOS</span>
+<span class="kw">ENCUT</span>    = <span class="nu">400</span>
+<span class="kw">PREC</span>     = <span class="st">Accurate</span>
+<span class="kw">EDIFF</span>    = <span class="nu">1E-6</span>
+<span class="kw">IBRION</span>   = <span class="nu">-1</span>
+<span class="kw">NSW</span>      = <span class="nu">0</span>
+<span class="kw">ISMEAR</span>   = <span class="nu">-5</span>           <span class="cm">; 四面体方法</span>
+<span class="kw">LWAVE</span>    = <span class="nu">.TRUE.</span></code></pre>
+            </div>
+            <div class="cb">
+                <div class="ch"><span class="la">KPOINTS</span><span class="fn">密集 k 点</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="vr">DOS k-points</span>
+<span class="nu">0</span>
+<span class="kw">Gamma</span>
+<span class="nu">12  12  12</span>
+<span class="nu">0  0  0</span></code></pre>
+            </div>
+        </div>
+
+        <!-- BAND -->
+        <div class="sec" id="s-band">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('tasks')">计算任务</a>/<span>能带结构</span></div>
+            <h2>能带结构计算</h2>
+            <p>分两步：① 静态计算生成 WAVECAR ② 沿高对称路径非自洽计算</p>
+            <div class="cb">
+                <div class="ch"><span class="la">INCAR</span><span class="fn">能带非自洽</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">ICHARG</span>   = <span class="nu">11</span>           <span class="cm">; 从 WAVECAR 读取</span>
+<span class="kw">IBRION</span>   = <span class="nu">-1</span>
+<span class="kw">NSW</span>      = <span class="nu">0</span>
+<span class="kw">ISMEAR</span>   = <span class="nu">0</span>
+<span class="kw">SIGMA</span>    = <span class="nu">0.05</span>
+<span class="kw">LORBIT</span>   = <span class="nu">11</span>           <span class="cm">; 投影能带</span></code></pre>
+            </div>
+            <div class="ib warn"><strong>关键：</strong>确保 <code class="ic">WAVECAR</code> 在当前目录中，<code class="ic">ICHARG=11</code>。</div>
+        </div>
+
+        <!-- SURFACE -->
+        <div class="sec" id="s-surface">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('tasks')">计算任务</a>/<span>表面模型</span></div>
+            <h2>表面模型构建与计算</h2>
+            <p>表面计算是催化、腐蚀、薄膜生长等研究的基础。VASP 使用 <strong>slab 模型</strong>来模拟表面。</p>
+            <h3>1. Slab 模型结构</h3>
+            <div class="db">
+                <div class="db-t">Slab 模型示意图</div>
+                <div style="text-align:center;font-family:var(--font-mono);font-size:13px;line-height:2.2;color:var(--text-secondary)">
+                    <div style="border:1px solid var(--border);border-radius:8px;padding:16px;display:inline-block;background:var(--bg-elevated);min-width:280px">
+                        <div style="color:var(--blue)">← 真空层 (≥12 Å) →</div>
+                        <div style="margin:8px 0;border-bottom:1px dashed var(--border-light);padding-bottom:8px"><div style="color:var(--red)">○ ○ ○ ○ ○ ← 吸附层（可选）</div></div>
+                        <div style="color:var(--green)">● ● ● ● ● ← 表面层</div>
+                        <div style="color:var(--green)">● ● ● ● ● ← 次表面层</div>
+                        <div style="color:var(--text-muted)">○ ○ ○ ○ ○ ← 固定层</div>
+                        <div style="color:var(--text-muted)">○ ○ ○ ○ ○ ← 固定层</div>
+                        <div style="margin-top:8px;color:var(--accent);font-size:11px">底部 2-3 层固定，模拟体相</div>
+                    </div>
+                </div>
+            </div>
+            <h3>2. 关键参数</h3>
+            <table class="tb">
+                <thead><tr><th>参数</th><th>建议</th><th>说明</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>层数</strong></td><td>4-7 层</td><td>太薄不准确</td></tr>
+                    <tr><td><strong>真空层</strong></td><td>≥12 Å</td><td>防止 slab 间作用</td></tr>
+                    <tr><td><strong>固定层</strong></td><td>底部 2-3 层</td><td>模拟体相</td></tr>
+                    <tr><td><strong>表面尺寸</strong></td><td>依研究需要</td><td>1×1, 2×2 等</td></tr>
+                </tbody>
+            </table>
+            <h3>3. pymatgen 自动生成</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">python</span><span class="fn">generate_slab.py</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">from</span> pymatgen.core <span class="kw">import</span> Structure
+<span class="kw">from</span> pymatgen.core.surface <span class="kw">import</span> SlabGenerator
+
+bulk = Structure.<span class="fn2">from_file</span>(<span class="st">"POSCAR_bulk"</span>)
+
+slabgen = SlabGenerator(
+    bulk, miller_index=(<span class="nu">1</span>,<span class="nu">1</span>,<span class="nu">1</span>),
+    min_slab_size=<span class="nu">10</span>, min_vacuum_size=<span class="nu">15</span>,
+    center_slab=<span class="kw">True</span>,
+)
+slabs = slabgen.<span class="fn2">get_slabs</span>()
+slabs[<span class="nu">0</span>].<span class="fn2">to</span>(filename=<span class="st">"POSCAR_slab"</span>)
+<span class="fn2">print</span>(<span class="st">f"原子数: {len(slabs[0])}"</span>)</code></pre>
+            </div>
+            <h3>4. INCAR 设置</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">INCAR</span><span class="fn">表面优化</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">SYSTEM</span>   = <span class="st">Cu(111) surface</span>
+<span class="kw">ENCUT</span>    = <span class="nu">450</span>
+<span class="kw">PREC</span>     = <span class="st">Accurate</span>
+<span class="kw">EDIFF</span>    = <span class="nu">1E-6</span>
+<span class="kw">IBRION</span>   = <span class="nu">2</span>
+<span class="kw">NSW</span>      = <span class="nu">200</span>
+<span class="kw">ISIF</span>     = <span class="nu">2</span>              <span class="cm">; 表面必须 ISIF=2</span>
+<span class="kw">EDIFFG</span>   = <span class="nu">-0.02</span>
+<span class="kw">ISMEAR</span>   = <span class="nu">1</span>              <span class="cm">; MP 展宽（金属）</span>
+<span class="kw">SIGMA</span>    = <span class="nu">0.2</span>
+<span class="kw">LDIPOL</span>   = <span class="nu">.TRUE.</span>         <span class="cm">; 偶极校正</span>
+<span class="kw">IDIPOL</span>   = <span class="nu">3</span></code></pre>
+            </div>
+            <div class="ib warn"><strong>重要：</strong>表面计算<strong>必须</strong>用 <code class="ic">ISIF=2</code>；KPOINTS z 方向设为 <code class="ic">1</code>；非对称 slab 开启偶极校正。</div>
+            <h3>5. 表面能计算</h3>
+            <div class="fb"><div class="fm">γ = (E_slab - N × E_bulk) / (2 × A)</div><div class="fd">γ: 表面能, A: 表面积, 2: 两个表面</div></div>
+            <div class="cb">
+                <div class="ch"><span class="la">python</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code>E_slab = <span class="nu">-156.234</span>;  E_bulk = <span class="nu">-3.720</span>
+N = <span class="nu">48</span>;  A = <span class="nu">86.52</span>
+gamma = (E_slab - N * E_bulk) / (<span class="nu">2</span> * A)
+<span class="fn2">print</span>(<span class="st">f"表面能: {gamma*16.02:.2f} J/m²"</span>)</code></pre>
+            </div>
+            <div class="qb">
+                <div class="qh"><span class="ql">练习</span><span class="qt">表面计算参数</span></div><div class="qbd">
+                    <p><strong>问题：</strong>对金属 Cu(111) 表面做优化，ISIF 应设为什么？</p>
+                    <div class="qo" onclick="selQ(this,'q3')"><div class="qr"></div><span>ISIF = 3</span></div>
+                    <div class="qo" onclick="selQ(this,'q3')"><div class="qr"></div><span>ISIF = 2（只优化离子）</span></div>
+                    <div class="qo" onclick="selQ(this,'q3')"><div class="qr"></div><span>ISIF = 4</span></div>
+                    <div class="qo" onclick="selQ(this,'q3')"><div class="qr"></div><span>不需要设置</span></div>
+                    <div id="q3-fb" class="qf"></div>
+                    <button class="qs" id="q3-s" onclick="chkQ('q3',1)">提交答案</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADSORPTION -->
+        <div class="sec" id="s-adsorption">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('tasks')">计算任务</a>/<span>吸附能</span></div>
+            <h2>吸附能计算</h2>
+            <h3>1. 定义</h3>
+            <div class="fb"><div class="fm">E_ads = E_(slab+ads) - E_slab - E_adsorbate</div><div class="fd">E_ads < 0 表示吸附放热（稳定）</div></div>
+            <h3>2. 计算流程</h3>
+            <div class="fc">
+                <div class="fn2-node s">优化干净表面 (E_slab)</div><div class="fa"></div>
+                <div class="fn2-node p">优化自由分子 (E_mol)</div><div class="fa"></div>
+                <div class="fn2-node p">构建吸附构型</div><div class="fa"></div>
+                <div class="fn2-node p">优化吸附体系 (E_total)</div><div class="fa"></div>
+                <div class="fn2-node e">E_ads = E_total - E_slab - E_mol</div>
+            </div>
+            <h3>3. 常见吸附位点</h3>
+            <div class="db">
+                <div class="db-t">fcc(111) 吸附位点</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px">
+                    <div style="background:var(--bg-elevated);padding:14px;border-radius:8px;text-align:center;border:1px solid var(--border)"><div style="font-size:24px;margin-bottom:6px">●</div><div style="font-weight:600;color:var(--accent)">Top</div><div style="font-size:12px;color:var(--text-muted)">原子正上方</div></div>
+                    <div style="background:var(--bg-elevated);padding:14px;border-radius:8px;text-align:center;border:1px solid var(--border)"><div style="font-size:24px;margin-bottom:6px">—●—</div><div style="font-weight:600;color:var(--blue)">Bridge</div><div style="font-size:12px;color:var(--text-muted)">两原子之间</div></div>
+                    <div style="background:var(--bg-elevated);padding:14px;border-radius:8px;text-align:center;border:1px solid var(--border)"><div style="font-size:24px;margin-bottom:6px">△</div><div style="font-weight:600;color:var(--green)">FCC</div><div style="font-size:12px;color:var(--text-muted)">三层空心位</div></div>
+                    <div style="background:var(--bg-elevated);padding:14px;border-radius:8px;text-align:center;border:1px solid var(--border)"><div style="font-size:24px;margin-bottom:6px">▽</div><div style="font-weight:600;color:var(--purple)">HCP</div><div style="font-size:12px;color:var(--text-muted)">二层空心位</div></div>
+                </div>
+            </div>
+            <h3>4. 吸附 INCAR</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">INCAR</span><span class="fn">CO on Pt(111)</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">SYSTEM</span>   = <span class="st">CO on Pt(111)</span>
+<span class="kw">ENCUT</span>    = <span class="nu">450</span>
+<span class="kw">PREC</span>     = <span class="st">Accurate</span>
+<span class="kw">EDIFF</span>    = <span class="nu">1E-6</span>
+<span class="kw">IBRION</span>   = <span class="nu">2</span>
+<span class="kw">NSW</span>      = <span class="nu">200</span>
+<span class="kw">ISIF</span>     = <span class="nu">2</span>
+<span class="kw">EDIFFG</span>   = <span class="nu">-0.02</span>
+<span class="kw">ISMEAR</span>   = <span class="nu">1</span>
+<span class="kw">SIGMA</span>    = <span class="nu">0.2</span>
+<span class="kw">ISPIN</span>    = <span class="nu">2</span>
+<span class="kw">LDIPOL</span>   = <span class="nu">.TRUE.</span>
+<span class="kw">IDIPOL</span>   = <span class="nu">3</span></code></pre>
+            </div>
+            <h3>5. 自动化脚本</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">bash</span><span class="fn">adsorption_workflow.sh</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">#!/bin/bash</span>
+<span class="fn2">echo</span> <span class="st">"=== 干净表面 ==="</span>
+<span class="fn2">cd</span> clean_surface; <span class="fn2">mpirun</span> -np <span class="nu">16</span> vasp_std
+E_slab=$(<span class="fn2">grep</span> <span class="st">"free  energy"</span> OUTCAR | <span class="fn2">tail</span> -1 | <span class="fn2">awk</span> <span class="st">'{print $5}'</span>)
+<span class="fn2">cd</span> ..
+
+<span class="fn2">echo</span> <span class="st">"=== 自由分子 ==="</span>
+<span class="fn2">cd</span> free_molecule; <span class="fn2">mpirun</span> -np <span class="nu">4</span> vasp_std
+E_mol=$(<span class="fn2">grep</span> <span class="st">"free  energy"</span> OUTCAR | <span class="fn2">tail</span> -1 | <span class="fn2">awk</span> <span class="st">'{print $5}'</span>)
+<span class="fn2">cd</span> ..
+
+<span class="fn2">echo</span> <span class="st">"=== 吸附体系 ==="</span>
+<span class="fn2">cd</span> adsorption; <span class="fn2">mpirun</span> -np <span class="nu">16</span> vasp_std
+E_total=$(<span class="fn2">grep</span> <span class="st">"free  energy"</span> OUTCAR | <span class="fn2">tail</span> -1 | <span class="fn2">awk</span> <span class="st">'{print $5}'</span>)
+<span class="fn2">cd</span> ..
+
+E_ads=$(<span class="fn2">echo</span> <span class="st">"${E_total} - ${E_slab} - ${E_mol}"</span> | <span class="fn2">bc</span> -l)
+<span class="fn2">echo</span> <span class="st">"E_ads = ${E_ads} eV"</span></code></pre>
+            </div>
+            <div class="ib warn"><strong>注意：</strong>三个计算必须使用<strong>相同的 ENCUT 和 KPOINTS</strong>；自由分子放在大盒子中（20×20×20 Å），k 点用 1×1×1。</div>
+        </div>
+
+        <!-- FORMATION -->
+        <div class="sec" id="s-formation">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('tasks')">计算任务</a>/<span>形成能</span></div>
+            <h2>形成能计算</h2>
+            <h3>1. 定义</h3>
+            <div class="fb"><div class="fm">ΔH_f = E(AB) - [x·E(A) + (1-x)·E(B)]</div><div class="fd">ΔH_f < 0 表示化合物热力学稳定</div></div>
+            <h3>2. 计算示例：TiO₂</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">python</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="cm"># Ti + O2 → TiO2</span>
+E_TiO2 = <span class="nu">-234.56</span>;  E_Ti = <span class="nu">-7.89</span>;  E_O2 = <span class="nu">-9.86</span>
+delta = E_TiO2/<span class="nu">4</span> - E_Ti - E_O2
+<span class="fn2">print</span>(<span class="st">f"形成能: {delta:.3f} eV/f.u."</span>)
+<span class="fn2">print</span>(<span class="st">f"        {delta*96.485:.1f} kJ/mol"</span>)</code></pre>
+            </div>
+            <h3>3. 参考态选择</h3>
+            <table class="tb">
+                <thead><tr><th>元素</th><th>参考态</th><th>说明</th></tr></thead>
+                <tbody>
+                    <tr><td>金属 (Ti, Fe...)</td><td>体相金属</td><td>计算体相单原子能</td></tr>
+                    <tr><td>O</td><td>O₂ 分子</td><td>大盒子中计算</td></tr>
+                    <tr><td>N</td><td>N₂ 分子</td><td>大盒子中计算</td></tr>
+                    <tr><td>H</td><td>H₂ 分子</td><td>大盒子中计算</td></tr>
+                    <tr><td>C</td><td>石墨/金刚石</td><td>依研究选择</td></tr>
+                </tbody>
+            </table>
+            <div class="ib warn"><strong>注意：</strong>所有计算必须使用<strong>相同的泛函和截断能</strong>；气体分子误差较大，可参考 Wang et al., <em>CMS</em> 47, 1054 (2010) 的经验校正。</div>
+        </div>
+
+        <!-- DEFECT -->
+        <div class="sec" id="s-defect">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('tasks')">计算任务</a>/<span>缺陷计算</span></div>
+            <h2>点缺陷形成能计算</h2>
+            <h3>1. 定义</h3>
+            <div class="fb"><div class="fm">E_f = E_defect - E_perfect + Σ nᵢμᵢ + q(E_VBM + E_Fermi) + E_corr</div><div class="fd">nᵢ: 原子数变化 | μᵢ: 化学势 | q: 电荷 | E_corr: 有限尺寸校正</div></div>
+            <h3>2. 计算流程</h3>
+            <div class="fc">
+                <div class="fn2-node s">构建完美超胞（如 3×3×3）</div><div class="fa"></div>
+                <div class="fn2-node p">优化完美超胞 → E_perfect</div><div class="fa"></div>
+                <div class="fn2-node p">引入缺陷（删除/替换/插入原子）</div><div class="fa"></div>
+                <div class="fn2-node p">优化缺陷超胞 → E_defect</div><div class="fa"></div>
+                <div class="fn2-node p">有限尺寸校正（FNV）</div><div class="fa"></div>
+                <div class="fn2-node e">计算缺陷形成能</div>
+            </div>
+            <h3>3. 带电缺陷 INCAR</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">INCAR</span><span class="fn">+1 电荷缺陷</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">SYSTEM</span>   = <span class="st">Si vacancy +1</span>
+<span class="kw">ENCUT</span>    = <span class="nu">400</span>
+<span class="kw">PREC</span>     = <span class="st">Accurate</span>
+<span class="kw">EDIFF</span>    = <span class="nu">1E-6</span>
+<span class="kw">IBRION</span>   = <span class="nu">2</span>
+<span class="kw">NSW</span>      = <span class="nu">200</span>
+<span class="kw">ISIF</span>     = <span class="nu">2</span>
+<span class="kw">ISMEAR</span>   = <span class="nu">0</span>
+<span class="kw">SIGMA</span>    = <span class="nu">0.05</span>
+<span class="kw">NELECT</span>   = <span class="nu">287</span>           <span class="cm">; 总电子数 - q</span></code></pre>
+            </div>
+            <div class="ib note"><strong>超胞大小：</strong>要求超胞边长 ≥10 Å 或至少 3×3×3。建议做超胞收敛测试。</div>
+            <h3>4. 自动化工具</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">python</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">from</span> doped <span class="kw">import</span> DefectsSet
+<span class="kw">from</span> pymatgen.core <span class="kw">import</span> Structure
+
+structure = Structure.<span class="fn2">from_file</span>(<span class="st">"POSCAR_perfect"</span>)
+ds = DefectsSet(structure, charge_states=[<span class="nu">-2</span>,<span class="nu">-1</span>,<span class="nu">0</span>,<span class="nu">1</span>,<span class="nu">2</span>], supercell_size=<span class="nu">3</span>)
+ds.<span class="fn2">write_files</span>(<span class="st">"defect_calcs"</span>)</code></pre>
+            </div>
+        </div>
+
+        <!-- PHONON -->
+        <div class="sec" id="s-phonon">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('tasks')">计算任务</a>/<span>声子计算</span></div>
+            <h2>声子计算</h2>
+            <p>声子谱反映晶格动力学稳定性，虚频意味着结构不稳定。</p>
+            <h3>phonopy + VASP 工作流</h3>
+            <div class="fc">
+                <div class="fn2-node s">优化结构（CONTCAR）</div><div class="fa"></div>
+                <div class="fn2-node p">phonopy --vasp -d --dim="3 3 3"</div><div class="fa"></div>
+                <div class="fn2-node p">生成超胞 POSCAR（DISP-001, 002...）</div><div class="fa"></div>
+                <div class="fn2-node p">对每个超胞做静态计算</div><div class="fa"></div>
+                <div class="fn2-node p">phonopy -f DISP-*/vasprun.xml</div><div class="fa"></div>
+                <div class="fn2-node e">phonopy-bandplot → 声子谱</div>
+            </div>
+            <h3>优化 INCAR（高精度要求）</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">INCAR</span><span class="fn">声子前结构优化</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">PREC</span>     = <span class="st">Accurate</span>
+<span class="kw">ENCUT</span>    = <span class="nu">500</span>           <span class="cm">; 需要较高精度</span>
+<span class="kw">EDIFF</span>    = <span class="nu">1E-8</span>          <span class="cm">; 严格收敛</span>
+<span class="kw">EDIFFG</span>   = <span class="nu">-1E-4</span>         <span class="cm">; 力收敛到 0.0001</span>
+<span class="kw">IBRION</span>   = <span class="nu">2</span>
+<span class="kw">NSW</span>      = <span class="nu">200</span>
+<span class="kw">ISIF</span>     = <span class="nu">3</span>
+<span class="kw">ISMEAR</span>   = <span class="nu">0</span>
+<span class="kw">SIGMA</span>    = <span class="nu">0.05</span></code></pre>
+            </div>
+            <h3>批量计算脚本</h3>
+            <div class="cb">
+                <div class="ch"><span class="la">bash</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="cm"># 生成位移超胞</span>
+<span class="fn2">cp</span> CONTCAR POSCAR-orig
+<span class="fn2">phonopy</span> --vasp -d --dim=<span class="st">"3 3 3"</span>
+
+<span class="cm"># 批量计算</span>
+<span class="kw">for</span> d <span class="kw">in</span> DISP-*; <span class="kw">do</span>
+    <span class="fn2">cd</span> $d; <span class="fn2">cp</span> ../INCAR_static ../POTCAR ../KPOINTS ./
+    <span class="fn2">mpirun</span> -np <span class="nu">16</span> vasp_std; <span class="fn2">cd</span> ..
+<span class="kw">done</span>
+
+<span class="cm"># 提取力常数并绘图</span>
+<span class="fn2">phonopy</span> -f DISP-*/vasprun.xml
+<span class="fn2">phonopy</span> --dim=<span class="st">"3 3 3"</span> -c POSCAR-orig band.conf
+<span class="fn2">phonopy-bandplot</span></code></pre>
+            </div>
+            <div class="ib warn"><strong>精度要求：</strong>声子计算对结构非常敏感。需要高 ENCUT、严格力收敛（<code class="ic">EDIFFG = -1E-4</code>）、足够 k 点。</div>
+        </div>
+
+        <!-- OUTPUT -->
+        <div class="sec" id="s-output">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<span>结果分析</span></div>
+            <h2>输出文件解读</h2>
+            <table class="tb">
+                <thead><tr><th>文件</th><th>内容</th><th>常用操作</th></tr></thead>
+                <tbody>
+                    <tr><td><code>OUTCAR</code></td><td>详细输出</td><td>能量、力、应力</td></tr>
+                    <tr><td><code>OSZICAR</code></td><td>迭代摘要</td><td>收敛曲线</td></tr>
+                    <tr><td><code>CONTCAR</code></td><td>优化结构</td><td>下一步 POSCAR</td></tr>
+                    <tr><td><code>DOSCAR</code></td><td>态密度</td><td>绘制 DOS 图</td></tr>
+                    <tr><td><code>EIGENVAL</code></td><td>本征值</td><td>绘制能带图</td></tr>
+                    <tr><td><code>CHGCAR</code></td><td>电荷密度</td><td>非自洽计算</td></tr>
+                    <tr><td><code>WAVECAR</code></td><td>波函数</td><td>能带计算</td></tr>
+                </tbody>
+            </table>
+            <div class="cb">
+                <div class="ch"><span class="la">bash</span><span class="fn">常用提取命令</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="fn2">grep</span> <span class="st">"free  energy"</span> OUTCAR | <span class="fn2">tail</span> -1
+<span class="fn2">grep</span> <span class="st">"TOTAL-FORCE"</span> OUTCAR -A <span class="nu">4</span>
+<span class="fn2">grep</span> <span class="st">"E-fermi"</span> OUTCAR
+<span class="fn2">grep</span> <span class="st">"reached required"</span> OUTCAR
+<span class="fn2">grep</span> <span class="st">"in kB"</span> OUTCAR | <span class="fn2">tail</span> -1
+<span class="fn2">grep</span> <span class="st">"magnetization"</span> OUTCAR -A <span class="nu">20</span></code></pre>
+            </div>
+        </div>
+
+        <!-- CONVERGENCE -->
+        <div class="sec" id="s-convergence">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<span>收敛性测试</span></div>
+            <h2>收敛性测试</h2>
+            <div class="cb">
+                <div class="ch"><span class="la">bash</span><span class="fn">encut_test.sh</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="kw">#!/bin/bash</span>
+<span class="kw">for</span> encut <span class="kw">in</span> <span class="nu">200 250 300 350 400 450 500</span>; <span class="kw">do</span>
+    <span class="fn2">mkdir</span> ENCUT_${encut}
+    <span class="fn2">cp</span> POSCAR KPOINTS POTCAR ENCUT_${encut}/
+    <span class="fn2">sed</span> <span class="st">"s/ENCUT.*/ENCUT = ${encut}/"</span> INCAR > ENCUT_${encut}/INCAR
+    <span class="fn2">cd</span> ENCUT_${encut}; <span class="fn2">mpirun</span> -np <span class="nu">4</span> vasp_std; <span class="fn2">cd</span> ..
+<span class="kw">done</span>
+<span class="kw">for</span> encut <span class="kw">in</span> <span class="nu">200 250 300 350 400 450 500</span>; <span class="kw">do</span>
+    e=$(<span class="fn2">grep</span> <span class="st">"free  energy"</span> ENCUT_${encut}/OUTCAR | <span class="fn2">tail</span> -1 | <span class="fn2">awk</span> <span class="st">'{print $5}'</span>)
+    <span class="fn2">echo</span> <span class="st">"${encut}  ${e}"</span>
+<span class="kw">done</span></code></pre>
+            </div>
+            <div class="ib tip"><strong>判断标准：</strong>相邻 ENCUT 能量差 < <code class="ic">1 meV/atom</code> 时收敛。</div>
+        </div>
+        <!-- ERRORS OVERVIEW -->
+        <div class="sec" id="s-errors">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<span>错误诊断</span></div>
+            <h2>VASP 错误诊断系统</h2>
+            <p>使用 VASP 时难免遇到报错，这个系统帮你快速定位和解决问题。</p>
+            <div class="pg">
+                <div class="pc" style="--ca:var(--red)" onclick="go('err-scf')"><div class="pc-i">⚡</div><div class="pc-t">SCF 不收敛</div><div class="pc-d">电子步迭代无法收敛——最高频问题</div><div class="pc-m"><span style="background:var(--red-dim);color:var(--red);padding:2px 8px;border-radius:10px;font-size:11px">高频</span></div></div>
+                <div class="pc" style="--ca:var(--orange)" onclick="go('err-ion')"><div class="pc-i">💥</div><div class="pc-t">离子步问题</div><div class="pc-d">优化不收敛、力振荡、原子跑飞</div><div class="pc-m"><span style="background:var(--accent-glow);color:var(--accent);padding:2px 8px;border-radius:10px;font-size:11px">常见</span></div></div>
+                <div class="pc" style="--ca:var(--purple)" onclick="go('err-memory')"><div class="pc-i">💾</div><div class="pc-t">内存与性能</div><div class="pc-d">内存溢出、计算太慢、并行效率低</div><div class="pc-m"><span style="background:var(--accent-glow);color:var(--accent);padding:2px 8px;border-radius:10px;font-size:11px">常见</span></div></div>
+                <div class="pc" style="--ca:var(--blue)" onclick="go('err-files')"><div class="pc-i">📂</div><div class="pc-t">文件错误</div><div class="pc-d">POTCAR 不匹配、POSCAR 格式错误</div><div class="pc-m"><span style="background:var(--blue-dim);color:var(--blue);padding:2px 8px;border-radius:10px;font-size:11px">基础</span></div></div>
+                <div class="pc" style="--ca:var(--cyan)" onclick="go('err-output')"><div class="pc-i">🔍</div><div class="pc-t">输出异常</div><div class="pc-d">能量异常、力很大、结果不合理</div><div class="pc-m"><span style="background:var(--blue-dim);color:var(--blue);padding:2px 8px;border-radius:10px;font-size:11px">排查</span></div></div>
+            </div>
+            <h3>通用诊断流程</h3>
+            <div class="fc">
+                <div class="fn2-node s">VASP 计算异常终止</div><div class="fa"></div>
+                <div class="fn2-node p">① 查看 OUTCAR 最后 50 行</div><div class="fa"></div>
+                <div class="fn2-node p">② 查看 OSZICAR 收敛情况</div><div class="fa"></div>
+                <div class="fn2-node p">③ 检查四个输入文件</div><div class="fa"></div>
+                <div class="fn2-node p">④ 搜索错误关键词</div><div class="fa"></div>
+                <div class="fn2-node e">定位问题 → 应用解决方案</div>
+            </div>
+            <div class="cb">
+                <div class="ch"><span class="la">bash</span><span class="fn">快速诊断</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="fn2">tail</span> -50 OUTCAR
+<span class="fn2">grep</span> -i <span class="st">"error\|warning\|abort\|ZBRENT\|DENTET"</span> OUTCAR
+<span class="fn2">grep</span> <span class="st">"Total CPU time"</span> OUTCAR
+<span class="fn2">cat</span> OSZICAR
+<span class="fn2">df</span> -h .</code></pre>
+            </div>
+        </div>
+
+        <!-- ERR-SCF -->
+        <div class="sec" id="s-err-scf">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('errors')">错误诊断</a>/<span>SCF 不收敛</span></div>
+            <h2>SCF 不收敛问题</h2>
+            <p>SCF 不收敛是最高频的问题。以下是完整排查清单。</p>
+            <div class="ec open" id="e1">
+                <div class="ec-h" onclick="togE('e1')"><span class="ei">🔴</span><span class="et">问题 1：电子步达到 NELM 上限仍未收敛</span><span class="es sc">高频</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <h4>症状</h4>
+                    <div class="esym">DAV: 64  -0.275E+03  0.217E+00  -0.109E+00<br>（能量差持续振荡不下降）</div>
+                    <h4>原因</h4>
+                    <ul><li><strong>初始磁矩设置不当</strong>（最常见）</li><li>展宽方法错误</li><li>截断能太低</li><li>初始结构不合理</li><li>强关联体系需要 +U</li></ul>
+                    <h4>解决方案</h4>
+                    <div class="cb">
+                        <div class="ch"><span class="la">INCAR</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="cm"># 方案 1：降低收敛标准</span>
+<span class="kw">EDIFF</span>    = <span class="nu">1E-4</span>
+
+<span class="cm"># 方案 2：更稳定的混合方法</span>
+<span class="kw">AMIX</span>     = <spanspan class="cm">; 默认 0.4</span>
+<span class="kw">BMIX</span> class="nu">0.1</span>           <     = <span class="nu">0.0001</span>
+<span class="kw">AMIX_MAG</span> = <span class="nu">0.2</span>           <span class="cm">; 磁性体系</span>
+<span class="kw">BMIX_MAG</span> = <span class="nu">0.0001</span>
+
+<span class="cm"># 方案 3：增加最大电子步</span>
+<span class="kw">NELM</span>     = <span class="nu">200</span>
+
+<span class="cm"># 方案 4：Kerker 预处理</span>
+<span class="kw">IMIX</span>     = <span class="st">'Kerker'</span>
+<span class="kw">MAXMIX</span>   = <span class="nu">40</span>
+
+<span class="cm"># 方案 5：金属用正确展宽</span>
+<span class="kw">ISMEAR</span>   = <span class="nu">1</span>
+<span class="kw">SIGMA</span>    = <span class="nu">0.2</span></code></pre>
+                    </div>
+                    <div class="ib tip"><strong>排查顺序：</strong>① MAGMOM 设置 ② ISMEAR ③ 降低 AMIX ④ 检查原子距离 ⑤ 是否需要 +U</div>
+                </div>
+            </div>
+            <div class="ec" id="e2">
+                <div class="ec-h" onclick="togE('e2')"><span class="ei">🔴</span><span class="et">问题 2：DENTET - 能带数不足</span><span class="es sc">高频</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <h4>症状</h4>
+                    <div class="esym">WARNING: DENTET: can't reach specified NBANDS<br>NELECT = 120.0000   NBANDS = 64</div>
+                    <h4>解决方案</h4>
+                    <div class="cb">
+                        <div class="ch"><span class="la">INCAR</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="kw">NBANDS</span>   = <span class="nu">160</span>
+<span class="cm"># 经验: NBANDS ≥ NELECT/2 + N_atoms/2</span></code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="ec" id="e3">
+                <div class="ec-h" onclick="togE('e3')"><span class="ei">🟡</span><span class="et">问题 3：ZBRENT - 线搜索失败</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <h4>症状</h4>
+                    <div class="esym">ZBRENT: fatal error in bracketing</div>
+                    <h4>解决方案</h4>
+                    <div class="cb">
+                        <div class="ch"><span class="la">INCAR</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="kw">IBRION</span>   = <span class="nu">1</span>             <span class="cm">; CG → RMM-DIIS</span>
+<span class="kw">POTIM</span>    = <span class="nu">0.01</span>          <span class="cm">; 缩小步长</span></code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="ec" id="e4">
+                <div class="ec-h" onclick="togE('e4')"><span class="ei">🟡</span><span class="et">问题 4：SCF 收敛但结果不合理</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <table class="tb">
+                        <thead><tr><th>检查项</th><th>方法</th></tr></thead>
+                        <tbody>
+                            <tr><td>POTCAR 泛函</td><td><code class="ic">grep TITEL POTCAR</code></td></tr>
+                            <tr><td>ENCUT 足够</td><td>收敛性测试</td></tr>
+                            <tr><td>K 点足够</td><td>收敛性测试</td></tr>
+                            <tr><td>自旋极化</td><td>含 3d/4f 金属通常需要</td></tr>
+                            <tr><td>是否需要 +U</td><td>强关联体系</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="ec" id="e5">
+                <div class="ec-h" onclick="togE('e5')"><span class="ei">🔴</span><span class="et">问题 5：VERY BAD NEWS! SGRCON 错误</span><span class="es sc">高频</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <h4>症状</h4>
+                    <div class="esym">VERY BAD NEWS! internal error in subroutine SGRCON<br>The product of the three lattice vectors is negative</div>
+                    <h4>解决方案</h4>
+                    <p>晶格矢量构成的右手系方向错误。检查 POSCAR 中三个晶格矢量的顺序，交换其中两行使其构成右手坐标系。或用 VESTA/pymatgen 重新生成 POSCAR。</p>
+                </div>
+            </div>
+            <div class="qb">
+                <div class="qh"><span class="ql">练习</span><span class="qt">SCF 问题</span></div>
+                <div class="qbd">
+                    <p><strong>问题：</strong>SCF 不收敛时，首先应检查什么？</p>
+                    <div class="qo" onclick="selQ(this,'q2')"><div class="qr"></div><span>增加 NSW</span></div>
+                    <div class="qo" onclick="selQ(this,'q2')"><div class="qr"></div><span>检查 MAGMOM 设置</span></div>
+                    <div class="qo" onclick="selQ(this,'q2')"><div class="qr"></div><span>更换 POTCAR</span></div>
+                    <div class="qo" onclick="selQ(this,'q2')"><div class="qr"></div><span>减小 ENCUT</span></div>
+                    <div id="q2-fb" class="qf"></div>
+                    <button class="qs" id="q2-s" onclick="chkQ('q2',1)">提交答案</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ERR-ION -->
+        <div class="sec" id="s-err-ion">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('errors')">错误诊断</a>/<span>离子步问题</span></div>
+            <h2>离子步问题诊断</h2>
+            <div class="ec open" id="ei1">
+                <div class="ec-h" onclick="togE('ei1')"><span class="ei">🔴</span><span class="et">问题 1：达到 NSW 上限仍未收敛</span><span class="es sc">高频</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <h4>解决方案</h4>
+                    <ul><li>增大 <code class="ic">NSW = 300</code></li><li>放宽 <code class="ic">EDIFFG = -0.05</code></li><li>换优化方法 <code class="ic">IBRION = 1</code></li><li>减小步长 <code class="ic">POTIM = 0.2</code></li></ul>
+                </div>
+            </div>
+            <div class="ec" id="ei2">
+                <div class="ec-h" onclick="togE('ei2')"><span class="ei">🔴</span><span class="et">问题 2：原子跑飞 / 结构崩塌</span><span class="es sc">高频</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <h4>原因</h4>
+                    <ul><li>初始结构原子距离太近</li><li>POTIM 步长太大</li><li>POSCAR 坐标类型写错</li><li>POSCAR 和 POTCAR 元素顺序不一致</li></ul>
+                    <h4>解决方案</h4>
+                    <div class="cb">
+                        <div class="ch"><span class="la">INCAR</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="kw">POTIM</span>    = <span class="nu">0.1</span>           <span class="cm">; 缩小步长</span>
+<span class="kw">EDIFF</span>    = <span class="nu">1E-4</span>
+<span class="kw">EDIFFG</span>   = <span class="nu">-0.1</span></code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="ec" id="ei3">
+                <div class="ec-h" onclick="togE('ei3')"><span class="ei">🟡</span><span class="et">问题 3：力不收敛但能量收敛</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <ul><li>降低 <code class="ic">EDIFF = 1E-7</code></li><li>增加 ENCUT</li><li>加密 K 点</li><li>使用 <code class="ic">IBRION = 1</code></li></ul>
+                </div>
+            </div>
+            <div class="ec" id="ei4">
+                <div class="ec-h" onclick="togE('ei4')"><span class="ei">🟡</span><span class="et">问题 4：ISIF=3 时晶格参数异常</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <table class="tb">
+                        <thead><tr><th>可能原因</th><th>解决</th></tr></thead>
+                        <tbody>
+                            <tr><td>GGA-PBE 本身高估晶格</td><td>正常误差 ~1-2%</td></tr>
+                            <tr><td>需要杂化泛函</td><td>使用 HSE06</td></tr>
+                            <tr><td>需要 +U</td><td>添加 LDAU 参数</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ERR-MEMORY -->
+        <div class="sec" id="s-err-memory">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('errors')">错误诊断</a>/<span>内存与性能</span></div>
+            <h2>内存与性能问题</h2>
+            <div class="ec open" id="em1">
+                <div class="ec-h" onclick="togE('em1')"><span class="ei">🔴</span><span class="et">问题 1：Out of memory / Killed</span><span class="es sc">高频</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <div class="esym">forrtl: severe (41): insufficient virtual memory<br>或直接显示 Killed</div>
+                    <div class="cb">
+                        <div class="ch"><span class="la">INCAR</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="kw">LREAL</span>    = <span class="st">Auto</span>          <span class="cm">; 实空间积分（大体系）</span>
+<span class="kw">NSIM</span>     = <span class="nu">1</span>             <span class="cm">; 减少同时处理的轨道数</span></code></pre>
+                    </div>
+                    <div class="ib tip"><strong>内存估算：</strong>每个原子约需 50-200 MB。100 原子、ENCUT=500 约需 20-40 GB 总内存。</div>
+                </div>
+            </div>
+            <div class="ec" id="em2">
+                <div class="ec-h" onclick="togE('em2')"><span class="ei">🟡</span><span class="et">问题 2：计算速度太慢</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <div class="cb">
+                        <div class="ch"><span class="la">INCAR</span><span class="fn">性能优化</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="cm"># 实空间投影（>50 原子）</span>
+<span class="kw">LREAL</span>    = <span class="st">Auto</span>
+
+<span class="cm"># 电子步加速</span>
+<span class="kw">ALGO</span>     = <span class="st">Fast</span>
+<span class="kw">MAXMIX</span>   = <span class="nu">40</span>
+
+<span class="cm"># I/O 优化</span>
+<span class="kw">LWAVE</span>    = <span class="nu">.FALSE.</span>
+<span class="kw">LCHARG</span>   = <span class="nu">.FALSE.</span>
+<span class="kw">NWRITE</span>   = <span class="nu">0</span></code></pre>
+                    </div>
+                    <table class="tb">
+                        <thead><tr><th>参数</th><th>说明</th><th>建议</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>NPAR</code></td><td>能带并行数</td><td>设为节点数</td></tr>
+                            <tr><td><code>KPAR</code></td><td>K 点并行数</td><td>整除 K 点数</td></tr>
+                            <tr><td><code>NCORE</code></td><td>每组核心数</td><td>每节点核心数</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="cb">
+                        <div class="ch"><span class="la">INCAR</span><span class="fn">并行设置（64 核）</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="kw">NPAR</span>     = <span class="nu">8</span>
+<span class="kw">KPAR</span>     = <span class="nu">2</span>
+<span class="kw">NCORE</span>    = <span class="nu">8</span></code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="ec" id="em3">
+                <div class="ec-h" onclick="togE('em3')"><span class="ei">🟡</span><span class="et">问题 3：磁盘空间不足</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <div class="esym">forrtl: severe (30): open unit, error on file OPEN</div>
+                    <ul><li>检查磁盘：<code class="ic">df -h</code></li><li>删除 WAVECAR（最大文件）</li><li>设置 <code class="ic">LWAVE = .FALSE.</code></li></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ERR-FILES -->
+        <div class="sec" id="s-err-files">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('errors')">错误诊断</a>/<span>文件错误</span></div>
+            <h2>文件错误诊断</h2>
+            <div class="ec open" id="ef1">
+                <div class="ec-h" onclick="togE('ef1')"><span class="ei">🔴</span><span class="et">问题 1：POTCAR 元素顺序与 POSCAR 不一致</span><span class="es sc">高频</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <div class="cb">
+                        <div class="ch"><span class="la">bash</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="fn2">grep</span> TITEL POTCAR       <span class="cm"># POTCAR 元素</span>
+<span class="fn2">head</span> -6 POSCAR           <span class="cm"># POSCAR 元素</span>
+<span class="cm"># 确认两者顺序一致！</span></code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="ec" id="ef2">
+                <div class="ec-h" onclick="togE('ef2')"><span class="ei">🔴</span><span class="et">问题 2：POSCAR 格式错误</span><span class="es sc">高频</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <table class="tb">
+                        <thead><tr><th>错误</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr><td>缩放因子为 0</td><td>第二行不能为 0</td></tr>
+                            <tr><td>坐标类型拼错</td><td>必须是 <code>Direct</code> 或 <code>Cartesian</code></td></tr>
+                            <tr><td>原子数与坐标不匹配</td><td>检查总数</td></tr>
+                            <tr><td>多余空行</td><td>文件末尾不要有空行</td></tr>
+                            <tr><td>Windows 换行符</td><td><code class="ic">dos2unix POSCAR</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="ec" id="ef3">
+                <div class="ec-h" onclick="togE('ef3')"><span class="ei">🟡</span><span class="et">问题 3：KPOINTS 格式错误</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <ul><li>第 2 行不是 0</li><li>Gamma 拼写错误</li><li>Line-mode 缺少空行分隔线段</li></ul>
+                </div>
+            </div>
+            <div class="ec" id="ef4">
+                <div class="ec-h" onclick="togE('ef4')"><span class="ei">🟡</span><span class="et">问题 4：找不到 POTCAR 文件</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <div class="cb">
+                        <div class="ch"><span class="la">bash</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="fn2">ls</span> -la POTCAR
+<span class="fn2">echo</span> $VASP_PP_PATH
+<span class="fn2">cat</span> ~/potpaw_PBE/Ti/POTCAR > POTCAR
+<span class="fn2">cat</span> ~/potpaw_PBE/O/POTCAR >> POTCAR</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ERR-OUTPUT -->
+        <div class="sec" id="s-err-output">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<a href="#" onclick="go('errors')">错误诊断</a>/<span>输出异常</span></div>
+            <h2>输出异常诊断</h2>
+            <div class="ec open" id="eo1">
+                <div class="ec-h" onclick="togE('eo1')"><span class="ei">🟡</span><span class="et">问题 1：能量异常大或异常小</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <table class="tb">
+                        <thead><tr><th>现象</th><th>可能原因</th></tr></thead>
+                        <tbody>
+                            <tr><td>能量 ~10⁶ eV</td><td>原子重叠（距离太近）</td></tr>
+                            <tr><td>能量比文献差很多</td><td>POTCAR 泛函不匹配</td></tr>
+                            <tr><td>能量正数</td><td>严重结构错误</td></tr>
+                            <tr><td>NaN / Infinity</td><td>数值溢出，降低 ENCUT</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="ec" id="eo2">
+                <div class="ec-h" onclick="togE('eo2')"><span class="ei">🟡</span><span class="et">问题 2：力很大（> 1 eV/Å）</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <div class="cb">
+                        <div class="ch"><span class="la">bash</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="cm"># 查看最大力</span>
+<span class="fn2">grep</span> <span class="st">"TOTAL-FORCE"</span> OUTCAR -A <span class="nu">20</span> | <span class="fn2">tail</span> -20
+
+<span class="cm"># 检查原子距离</span>
+<span class="fn2">python3</span> -c "
+<span class="kw">from</span> ase.io <span class="kw">import</span> read
+atoms = read(<span class="st">'POSCAR'</span>)
+<span class="fn2">print</span>(atoms.get_all_distances().min())
+"</code></pre>
+                    </div>
+                    <div class="ib tip"><strong>正常值：</strong>优化收敛后力应 < 0.01 eV/Å。如果力 > 1，说明结构有问题。</div>
+                </div>
+            </div>
+            <div class="ec" id="eo3">
+                <div class="ec-h" onclick="togE('eo3')"><span class="ei">🟡</span><span class="et">问题 3：磁矩不合理</span><span class="es scm">常见</span><span class="ex">▼</span></div>
+                <div class="ec-b">
+                    <div class="cb">
+                        <div class="ch"><span class="la">bash</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                        <pre><code><span class="fn2">grep</span> <span class="st">"magnetization"</span> OUTCAR -A <span class="nu">20</span>
+<span class="cm"># 检查 MAGMOM 设置是否合理</span></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOOLS -->
+        <div class="sec" id="s-tools">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<span>工具与资源</span></div>
+            <h2>辅助工具</h2>
+            <div class="pg">
+                <div class="pc" style="--ca:var(--blue)" onclick="window.open('https://www.vasp.at/wiki/index.php/VESTA','_blank')"><div class="pc-i">🔬</div><div class="pc-t">VESTA</div><div class="pc-d">晶体结构可视化</div></div>
+                <div class="pc" style="--ca:var(--green)" onclick="window.open('https://vaspkit.com','_blank')"><div class="pc-i">🛠️</div><div class="pc-t">VASPKIT</div><div class="pc-d">后处理工具包</div></div>
+                <div class="pc" style="--ca:var(--purple)" onclick="window.open('https://pymatgen.org','_blank')"><div class="pc-i">🐍</div><div class="pc-t">pymatgen</div><div class="pc-d">Python 材料分析库</div></div>
+                <div class="pc" style="--ca:var(--orange)" onclick="window.open('https://phonopy.github.io/phonopy','_blank')"><div class="pc-i">🔊</div><div class="pc-t">phonopy</div><div class="pc-d">声子计算工具</div></div>
+            </div>
+        </div>
+
+        <!-- CHEATSHEET -->
+        <div class="sec" id="s-cheatsheet">
+            <div class="bread"><a href="#" onclick="go('home')">首页</a>/<span>速查手册</span></div>
+            <h2>速查手册</h2>
+            <div class="cb">
+                <div class="ch"><span class="la">常用命令</span><button class="cpb" onclick="cp(this)">复制</button></div>
+                <pre><code><span class="cm"># 提取能量</span>
+<span class="fn2">grep</span> <span class="st">"free  energy"</span> OUTCAR | <span class="fn2">tail</span> -1
+
+<span class="cm"># 提取力</span>
+<span class="fn2">grep</span> <span class="st">"TOTAL-FORCE"</span> OUTCAR -A <span class="nu">4</span>
+
+<span class="cm"># 检查收敛</span>
+<span class="fn2">grep</span> <span class="st">"reached required"</span> OUTCAR
+
+<span class="cm"># 查看磁矩</span>
+<span class="fn2">grep</span> <span class="st">"magnetization"</span> OUTCAR -A <span class="nu">20</span>
+
+<span class="cm"># 查看费米能级</span>
+<span class="fn2">grep</span> <span class="st">"E-fermi"</span> OUTCAR</code></pre>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // 简单的导航和交互函数
+        function go(section) {
+            // 隐藏所有section和hero
+            document.querySelectorAll('.sec, .hero').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // 显示目标section
+            const target = document.getElementById('s-' + section);
+            if (target) {
+                target.classList.add('active');
+            }
+            
+            // 更新导航按钮状态
+            document.querySelectorAll('.hdr-nav button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(section)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // 更新侧边栏状态
+            document.querySelectorAll('.sb-it').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('onclick').includes(section)) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // 关闭移动端侧边栏
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sbOv').classList.remove('show');
+        }
+        
+        function togSB() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sbOv').classList.toggle('show');
+        }
+        
+        function togE(id) {
+            document.getElementById(id).classList.toggle('open');
+        }
+        
+        function sTab(btn, tabId) {
+            // 更新标签按钮状态
+            btn.parentElement.querySelectorAll('.tbtn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // 显示对应内容
+            btn.parentElement.parentElement.querySelectorAll('.tc').forEach(tc => tc.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        function cp(btn) {
+            const pre = btn.closest('.cb').querySelector('pre');
+            const text = pre.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = '已复制!';
+                btn.classList.add('ok');
+                setTimeout(() => {
+                    btn.textContent = '复制';
+                    btn.classList.remove('ok');
+                }, 2000);
+            });
+        }
+        
+        function selQ(el, qId) {
+            // 移除同组其他选项的选中状态
+            el.parentElement.querySelectorAll('.qo').forEach(opt => {
+                opt.classList.remove('sel');
+            });
+            // 选中当前选项
+            el.classList.add('sel');
+        }
+        
+        function chkQ(qId, correctIndex) {
+            const options = document.querySelectorAll(`#${qId}-fb`)[0].parentElement.querySelectorAll('.qo');
+            const selected = document.querySelector(`#${qId}-fb`).parentElement.querySelector('.qo.sel');
+            
+            if (!selected) {
+                alert('请先选择一个选项');
+                return;
+            }
+            
+            const selectedIndex = Array.from(options).indexOf(selected);
+            const feedback = document.getElementById(`${qId}-fb`);
+            
+            if (selectedIndex === correctIndex) {
+                selected.classList.add('ok');
+                feedback.innerHTML = '<div style="color:var(--green)">✓ 回答正确！</div>';
+                feedback.classList.add('show');
+                feedback.style.background = 'var(--green-dim)';
+                feedback.style.border = '1px solid var(--green)';
+            } else {
+                selected.classList.add('no');
+                feedback.innerHTML = '<div style="color:var(--red)">✗ 回答错误。正确答案已标出。</div>';
+                feedback.classList.add('show');
+                feedback.style.background = 'var(--red-dim)';
+                feedback.style.border = '1px solid var(--red)';
+                options[correctIndex].classList.add('ok');
+            }
+            
+            // 禁用提交按钮
+            document.getElementById(`${qId}-s`).disabled = true;
+        }
+    </script>
+</body>
+</html>

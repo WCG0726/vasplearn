@@ -18,12 +18,6 @@ import ErrorsMemoryView from '../views/ErrorsMemoryView.vue'
 import ErrorsFilesView from '../views/ErrorsFilesView.vue'
 import ErrorsOutputView from '../views/ErrorsOutputView.vue'
 import ThermoelectricView from '../views/ThermoelectricView.vue'
-import GaussianView from '../views/GaussianView.vue'
-import GaussianInstallView from '../views/GaussianInstallView.vue'
-import GaussianInputView from '../views/GaussianInputView.vue'
-import GaussianTasksView from '../views/GaussianTasksView.vue'
-import GaussianOutputView from '../views/GaussianOutputView.vue'
-import GaussianVaspCompareView from '../views/GaussianVaspCompareView.vue'
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
@@ -42,14 +36,6 @@ const routes = [
   { path: '/convergence', name: 'convergence', component: ConvergenceView },
   { path: '/cheatsheet', name: 'cheatsheet', component: CheatSheetView },
   { path: '/thermoelectric', name: 'thermoelectric', component: ThermoelectricView },
-  
-  // Gaussian 教程
-  { path: '/gaussian', name: 'gaussian', component: GaussianView },
-  { path: '/gaussian/install', name: 'gaussian-install', component: GaussianInstallView },
-  { path: '/gaussian/input', name: 'gaussian-input', component: GaussianInputView },
-  { path: '/gaussian/tasks', name: 'gaussian-tasks', component: GaussianTasksView },
-  { path: '/gaussian/output', name: 'gaussian-output', component: GaussianOutputView },
-  { path: '/gaussian/vasp-compare', name: 'gaussian-vasp-compare', component: GaussianVaspCompareView },
   
   // 错误诊断详情页
   { path: '/errors/scf', name: 'errors-scf', component: ErrorsScfView },

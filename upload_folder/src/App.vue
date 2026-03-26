@@ -5,21 +5,18 @@
     <main class="mn">
       <router-view />
     </main>
-    <DisclaimerBanner />
   </div>
 </template>
 
 <script>
 import HeaderNav from './components/HeaderNav.vue'
 import SidebarNav from './components/SidebarNav.vue'
-import DisclaimerBanner from './components/DisclaimerBanner.vue'
 
 export default {
   name: 'App',
   components: {
     HeaderNav,
-    SidebarNav,
-    DisclaimerBanner
+    SidebarNav
   },
   data() {
     return {

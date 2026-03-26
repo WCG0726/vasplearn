@@ -41,39 +41,6 @@
         </router-link>
       </div>
       <div class="sb-sec">
-        <div class="sb-lbl">Gaussian 教程</div>
-        <router-link to="/gaussian" custom v-slot="{ navigate, isActive }">
-          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
-            <span class="ic">🔬</span>Gaussian 概述<span class="bd bd-new">NEW</span>
-          </div>
-        </router-link>
-        <router-link to="/gaussian/install" custom v-slot="{ navigate, isActive }">
-          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
-            <span class="ic">📦</span>安装配置
-          </div>
-        </router-link>
-        <router-link to="/gaussian/input" custom v-slot="{ navigate, isActive }">
-          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
-            <span class="ic">📝</span>输入文件
-          </div>
-        </router-link>
-        <router-link to="/gaussian/tasks" custom v-slot="{ navigate, isActive }">
-          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
-            <span class="ic">📊</span>计算任务
-          </div>
-        </router-link>
-        <router-link to="/gaussian/output" custom v-slot="{ navigate, isActive }">
-          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
-            <span class="ic">📋</span>输出分析
-          </div>
-        </router-link>
-        <router-link to="/gaussian/vasp-compare" custom v-slot="{ navigate, isActive }">
-          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
-            <span class="ic">🔄</span>与 VASP 对比
-          </div>
-        </router-link>
-      </div>
-      <div class="sb-sec">
         <div class="sb-lbl">结果分析</div>
         <router-link to="/output" custom v-slot="{ navigate, isActive }">
           <div class="sb-it" :class="{ active: isActive }" @click="navigate">
