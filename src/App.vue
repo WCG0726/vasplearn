@@ -56,15 +56,24 @@ export default {
     },
     handleScroll() {
       this.showBackToTop = window.scrollY > 300
+    },
+    typesetMath() {
+      this.$nextTick(() => {
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+          MathJax.typesetPromise().catch(err => console.log('MathJax error:', err))
+        }
+      })
     }
   },
   watch: {
     '$route'() {
       this.sidebarOpen = false
+      this.typesetMath()
     }
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
+    this.typesetMath()
   },
   beforeUnmount() {
     window.removeEventListener('scroll', this.handleScroll)

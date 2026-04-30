@@ -44,6 +44,18 @@
         <div class="pc-d">VESTA、VASPKIT、pymatgen 等辅助工具</div>
         <div class="pc-m"><span>⏱ 约 1h</span></div>
       </router-link>
+      <router-link to="/practical" class="pc" style="--ca:var(--orange)">
+        <div class="pc-i">🚀</div>
+        <div class="pc-t">实战指南</div>
+        <div class="pc-d">手把手教你完成常见计算任务</div>
+        <div class="pc-m"><span>⏱ 约 6h</span><span>📖 6 案例</span></div>
+      </router-link>
+      <router-link to="/gaussian" class="pc" style="--ca:var(--cyan)">
+        <div class="pc-i">🔬</div>
+        <div class="pc-t">Gaussian 教程</div>
+        <div class="pc-d">量子化学计算入门与进阶</div>
+        <div class="pc-m"><span>⏱ 约 5h</span><span>📖 10 章节</span></div>
+      </router-link>
     </div>
     <h2 class="stitle">{{ $t('home.vaspWorkflow') }}</h2>
     <div class="fc">

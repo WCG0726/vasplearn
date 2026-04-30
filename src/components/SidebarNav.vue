@@ -186,6 +186,16 @@
             <span class="ic">📤</span>计算结果分享<span class="bd bd-new">NEW</span>
           </div>
         </router-link>
+        <router-link to="/tools/formulas" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">📐</span>公式速查<span class="bd bd-new">NEW</span>
+          </div>
+        </router-link>
+        <router-link to="/practical" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">🚀</span>实战指南<span class="bd bd-new">NEW</span>
+          </div>
+        </router-link>
         <router-link to="/cheatsheet" custom v-slot="{ navigate, isActive }">
           <div class="sb-it" :class="{ active: isActive }" @click="navigate">
             <span class="ic">📋</span>速查手册

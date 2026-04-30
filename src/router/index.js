@@ -18,6 +18,7 @@ const CaseLibraryView = () => import('../views/CaseLibraryView.vue')
 const MaterialsDBView = () => import('../views/MaterialsDBView.vue')
 const VideoTutorialsView = () => import('../views/VideoTutorialsView.vue')
 const ShareResultsView = () => import('../views/ShareResultsView.vue')
+const FormulasView = () => import('../views/FormulasView.vue')
 const CheatSheetView = () => import('../views/CheatSheetView.vue')
 
 // 计算任务详情页
@@ -36,6 +37,9 @@ const ErrorsOutputView = () => import('../views/ErrorsOutputView.vue')
 
 // Gaussian 教程
 const GaussianView = () => import('../views/GaussianView.vue')
+
+// 实战指南
+const PracticalGuideView = () => import('../views/PracticalGuideView.vue')
 const GaussianInstallView = () => import('../views/GaussianInstallView.vue')
 const GaussianInputView = () => import('../views/GaussianInputView.vue')
 const GaussianTasksView = () => import('../views/GaussianTasksView.vue')
@@ -62,6 +66,7 @@ const routes = [
   { path: '/tools/materials-db', name: 'materials-db', component: MaterialsDBView },
   { path: '/tools/video-tutorials', name: 'video-tutorials', component: VideoTutorialsView },
   { path: '/tools/share-results', name: 'share-results', component: ShareResultsView },
+  { path: '/tools/formulas', name: 'formulas', component: FormulasView },
   
   // 计算任务详情页
   { path: '/surface', name: 'surface', component: SurfaceView },
@@ -69,6 +74,7 @@ const routes = [
   { path: '/phonon', name: 'phonon', component: PhononView },
   { path: '/convergence', name: 'convergence', component: ConvergenceView },
   { path: '/cheatsheet', name: 'cheatsheet', component: CheatSheetView },
+  { path: '/practical', name: 'practical', component: PracticalGuideView },
   { path: '/thermoelectric', name: 'thermoelectric', component: ThermoelectricView },
   
   // Gaussian 教程
