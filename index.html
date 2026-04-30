@@ -2,14 +2,70 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>VASP 材料计算学习平台</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/vasplearn/assets/index-B2OJXdZe.js"></script>
-  <link rel="stylesheet" crossorigin href="/vasplearn/assets/index-BqUDMyOz.css">
+
+  <!-- PWA 支持 -->
+  <link rel="manifest" href="/vasplearn/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VASP Learn">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <meta name="description" content="从密度泛函理论到第一性原理计算，系统掌握 VASP 的使用方法">
+  <meta name="keywords" content="VASP, DFT, 第一性原理, 材料计算, 密度泛函理论">
+  <meta name="author" content="VASP Learn">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="VASP 学习平台">
+  <meta property="og:description" content="从密度泛函理论到第一性原理计算，系统掌握 VASP 的使用方法">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://vasp-learn.com">
+  <meta property="og:image" content="/icons/icon-512x512.png">
+  <script type="module" crossorigin src="/vasplearn/assets/index-BSmeIEo-.js"></script>
+  <link rel="stylesheet" crossorigin href="/vasplearn/assets/index-B8nUC7Zm.css">
 </head>
 <body>
   <div id="app"></div>
+  <script>
+    // 注册 Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('Service Worker 注册成功:', registration.scope);
+
+            // 检查更新
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              console.log('新 Service Worker 安装中...');
+
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'activated') {
+                  console.log('新 Service Worker 已激活');
+                  // 可以在这里提示用户刷新页面
+                }
+              });
+            });
+          })
+          .catch((error) => {
+            console.log('Service Worker 注册失败:', error);
+          });
+      });
+    }
+
+    // 监听在线/离线状态
+    window.addEventListener('online', () => {
+      console.log('网络已连接');
+      // 可以在这里显示连接成功的提示
+    });
+
+    window.addEventListener('offline', () => {
+      console.log('网络已断开');
+      // 可以在这里显示离线提示
+    });
+  </script>
 </body>
 </html>
