@@ -283,6 +283,11 @@ export default {
       }
     }
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.typesetMath()
+    })
+  },
   computed: {
     filteredFormulas() {
       if (this.activeCategory === 'all') {
@@ -292,12 +297,22 @@ export default {
     }
   },
   methods: {
+    typesetMath() {
+      if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+        MathJax.typesetPromise([this.$el]).catch(err => console.log('MathJax error:', err))
+      }
+    },
     getCategoryName(category) {
       const cat = this.categories.find(c => c.id === category)
       return cat ? cat.name : category
     }
   },
   watch: {
+    activeCategory() {
+      this.$nextTick(() => {
+        this.typesetMath()
+      })
+    },
     'calcEncut.enmax': {
       handler(val) {
         this.calcEncut.result = Math.round(val * 1.2)
