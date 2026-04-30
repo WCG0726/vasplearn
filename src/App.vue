@@ -3,9 +3,23 @@
     <HeaderNav @toggle-sidebar="toggleSidebar" />
     <SidebarNav :isOpen="sidebarOpen" @close-sidebar="closeSidebar" />
     <main class="mn">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
     <DisclaimerBanner />
+
+    <!-- 回到顶部按钮 -->
+    <button
+      v-show="showBackToTop"
+      class="back-to-top"
+      @click="scrollToTop"
+      title="回到顶部"
+    >
+      ↑
+    </button>
   </div>
 </template>
 
@@ -23,7 +37,8 @@ export default {
   },
   data() {
     return {
-      sidebarOpen: false
+      sidebarOpen: false,
+      showBackToTop: false
     }
   },
   methods: {
@@ -32,12 +47,27 @@ export default {
     },
     closeSidebar() {
       this.sidebarOpen = false
+    },
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    },
+    handleScroll() {
+      this.showBackToTop = window.scrollY > 300
     }
   },
   watch: {
     '$route'() {
       this.sidebarOpen = false
     }
+  },
+  mounted() {
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  beforeUnmount() {
+    window.removeEventListener('scroll', this.handleScroll)
   }
 }
 </script>

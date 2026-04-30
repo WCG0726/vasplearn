@@ -1,18 +1,18 @@
 <template>
   <div class="hero active">
-    <h1 class="hero-t">VASP 材料计算<br>学习平台</h1>
-    <p class="hero-s">从密度泛函理论到第一性原理计算，系统掌握 VASP 的使用方法。包含基础教程、进阶计算任务和完整的错误诊断系统。</p>
-    
+    <h1 class="hero-t" v-html="$t('home.title').replace('\n', '<br>')"></h1>
+    <p class="hero-s">{{ $t('home.subtitle') }}</p>
+
     <ProgressWidget />
-    
+
     <div class="stats">
-      <div class="stat"><div class="stat-n">15</div><div class="stat-l">核心知识点</div></div>
-      <div class="stat"><div class="stat-n">8</div><div class="stat-l">计算任务教程</div></div>
-      <div class="stat"><div class="stat-n">20+</div><div class="stat-l">错误诊断方案</div></div>
-      <div class="stat"><div class="stat-n">∞</div><div class="stat-l">可探索的材料</div></div>
+      <div class="stat"><div class="stat-n">15</div><div class="stat-l">{{ $t('home.stats.coreTopics') }}</div></div>
+      <div class="stat"><div class="stat-n">8</div><div class="stat-l">{{ $t('home.stats.tutorials') }}</div></div>
+      <div class="stat"><div class="stat-n">20+</div><div class="stat-l">{{ $t('home.stats.diagnostics') }}</div></div>
+      <div class="stat"><div class="stat-n">∞</div><div class="stat-l">{{ $t('home.stats.materials') }}</div></div>
     </div>
-    <h2 class="stitle">学习路径</h2>
-    <p class="sdesc">按照推荐顺序学习，循序渐进地掌握材料计算</p>
+    <h2 class="stitle">{{ $t('home.learningPath') }}</h2>
+    <p class="sdesc">{{ $t('home.learningPathDesc') }}</p>
     <div class="pg">
       <router-link to="/theory" class="pc" style="--ca:var(--blue)">
         <div class="pc-i">📐</div>
@@ -45,7 +45,7 @@
         <div class="pc-m"><span>⏱ 约 1h</span></div>
       </router-link>
     </div>
-    <h2 class="stitle">VASP 计算流程</h2>
+    <h2 class="stitle">{{ $t('home.vaspWorkflow') }}</h2>
     <div class="fc">
       <div class="fn2-node s">🧱 确定材料结构</div><div class="fa"></div>
       <div class="fn2-node p">📝 编写 POSCAR</div><div class="fa"></div>

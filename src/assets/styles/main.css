@@ -868,3 +868,142 @@ pre code {
     font-size: 28px
   }
 }
+
+/* 浅色主题特定样式 */
+:root.light {
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+  }
+
+  .stat:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  }
+
+  .pc:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,.1);
+  }
+
+  .code-preview {
+    background: #f1f5f9;
+    color: #1e293b;
+  }
+
+  pre {
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+  }
+
+  .cb {
+    border-color: var(--border);
+  }
+
+  .ec {
+    border-color: var(--border);
+  }
+
+  .ec:hover {
+    border-color: var(--border-light);
+  }
+}
+
+/* 页面过渡动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 回到顶部按钮 */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s;
+  z-index: 1000;
+}
+
+.back-to-top:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 加载动画 */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 工具提示 */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 代码高亮增强 */
+.kw { color: var(--purple); }
+.st { color: var(--green); }
+.nu { color: var(--cyan); }
+.cm { color: var(--text-muted); font-style: italic; }
+.fn { color: var(--blue); }
+.vr { color: var(--accent); }
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .back-to-top {
+    width: 40px;
+    height: 40px;
+    bottom: 20px;
+    right: 20px;
+    font-size: 16px;
+  }
+}

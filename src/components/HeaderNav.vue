@@ -6,6 +6,8 @@
       <div class="txt"><span>VASP</span>Learn</div>
     </router-link>
     <SearchBox />
+    <ThemeToggle />
+    <LanguageToggle />
     <nav class="hdr-nav">
       <router-link to="/" custom v-slot="{ navigate, isActive }">
         <button @click="navigate" :class="{ active: isActive }">首页</button>
@@ -31,11 +33,15 @@
 
 <script>
 import SearchBox from './SearchBox.vue'
+import ThemeToggle from './ThemeToggle.vue'
+import LanguageToggle from './LanguageToggle.vue'
 
 export default {
   name: 'HeaderNav',
   components: {
-    SearchBox
+    SearchBox,
+    ThemeToggle,
+    LanguageToggle
   },
   methods: {
     toggleSidebar() {

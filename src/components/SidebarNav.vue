@@ -146,9 +146,49 @@
             <span class="ic">🛠️</span>辅助工具
           </div>
         </router-link>
+        <router-link to="/tools/calculator" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">🧮</span>计算器
+          </div>
+        </router-link>
+        <router-link to="/tools/input-generator" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">📝</span>输入文件生成器<span class="bd bd-new">NEW</span>
+          </div>
+        </router-link>
+        <router-link to="/tools/batch-script" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">📦</span>批量脚本生成器<span class="bd bd-new">NEW</span>
+          </div>
+        </router-link>
+        <router-link to="/tools/structure-viewer" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">🧬</span>3D 结构可视化<span class="bd bd-new">NEW</span>
+          </div>
+        </router-link>
+        <router-link to="/tools/case-library" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">📚</span>计算案例库<span class="bd bd-new">NEW</span>
+          </div>
+        </router-link>
+        <router-link to="/tools/materials-db" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">🗄️</span>Materials Project<span class="bd bd-new">NEW</span>
+          </div>
+        </router-link>
+        <router-link to="/tools/video-tutorials" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">🎬</span>视频教程<span class="bd bd-new">NEW</span>
+          </div>
+        </router-link>
+        <router-link to="/tools/share-results" custom v-slot="{ navigate, isActive }">
+          <div class="sb-it" :class="{ active: isActive }" @click="navigate">
+            <span class="ic">📤</span>计算结果分享<span class="bd bd-new">NEW</span>
+          </div>
+        </router-link>
         <router-link to="/cheatsheet" custom v-slot="{ navigate, isActive }">
           <div class="sb-it" :class="{ active: isActive }" @click="navigate">
-            <span class="ic">📝</span>速查手册
+            <span class="ic">📋</span>速查手册
           </div>
         </router-link>
       </div>

@@ -1,33 +1,50 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import TheoryView from '../views/TheoryView.vue'
-import InputView from '../views/InputView.vue'
-import TasksView from '../views/TasksView.vue'
-import OutputView from '../views/OutputView.vue'
-import ErrorsView from '../views/ErrorsView.vue'
-import ToolsView from '../views/ToolsView.vue'
-import CalculatorView from '../views/CalculatorView.vue'
-import SurfaceView from '../views/SurfaceView.vue'
-import DefectView from '../views/DefectView.vue'
-import PhononView from '../views/PhononView.vue'
-import ConvergenceView from '../views/ConvergenceView.vue'
-import CheatSheetView from '../views/CheatSheetView.vue'
-import ErrorsScfView from '../views/ErrorsScfView.vue'
-import ErrorsIonView from '../views/ErrorsIonView.vue'
-import ErrorsMemoryView from '../views/ErrorsMemoryView.vue'
-import ErrorsFilesView from '../views/ErrorsFilesView.vue'
-import ErrorsOutputView from '../views/ErrorsOutputView.vue'
-import ThermoelectricView from '../views/ThermoelectricView.vue'
-import GaussianView from '../views/GaussianView.vue'
-import GaussianInstallView from '../views/GaussianInstallView.vue'
-import GaussianInputView from '../views/GaussianInputView.vue'
-import GaussianTasksView from '../views/GaussianTasksView.vue'
-import GaussianOutputView from '../views/GaussianOutputView.vue'
-import GaussianVaspCompareView from '../views/GaussianVaspCompareView.vue'
-import GaussianParamsView from '../views/GaussianParamsView.vue'
-import GaussianVisualView from '../views/GaussianVisualView.vue'
-import GaussianFAQView from '../views/GaussianFAQView.vue'
-import GaussianGlossaryView from '../views/GaussianGlossaryView.vue'
+
+// 核心页面 - 使用懒加载
+const HomeView = () => import('../views/HomeView.vue')
+const TheoryView = () => import('../views/TheoryView.vue')
+const InputView = () => import('../views/InputView.vue')
+const TasksView = () => import('../views/TasksView.vue')
+const OutputView = () => import('../views/OutputView.vue')
+const ErrorsView = () => import('../views/ErrorsView.vue')
+const ToolsView = () => import('../views/ToolsView.vue')
+
+// 工具页面
+const CalculatorView = () => import('../views/CalculatorView.vue')
+const InputGeneratorView = () => import('../views/InputGeneratorView.vue')
+const BatchScriptView = () => import('../views/BatchScriptView.vue')
+const StructureViewerView = () => import('../views/StructureViewerView.vue')
+const CaseLibraryView = () => import('../views/CaseLibraryView.vue')
+const MaterialsDBView = () => import('../views/MaterialsDBView.vue')
+const VideoTutorialsView = () => import('../views/VideoTutorialsView.vue')
+const ShareResultsView = () => import('../views/ShareResultsView.vue')
+const CheatSheetView = () => import('../views/CheatSheetView.vue')
+
+// 计算任务详情页
+const SurfaceView = () => import('../views/SurfaceView.vue')
+const DefectView = () => import('../views/DefectView.vue')
+const PhononView = () => import('../views/PhononView.vue')
+const ConvergenceView = () => import('../views/ConvergenceView.vue')
+const ThermoelectricView = () => import('../views/ThermoelectricView.vue')
+
+// 错误诊断详情页
+const ErrorsScfView = () => import('../views/ErrorsScfView.vue')
+const ErrorsIonView = () => import('../views/ErrorsIonView.vue')
+const ErrorsMemoryView = () => import('../views/ErrorsMemoryView.vue')
+const ErrorsFilesView = () => import('../views/ErrorsFilesView.vue')
+const ErrorsOutputView = () => import('../views/ErrorsOutputView.vue')
+
+// Gaussian 教程
+const GaussianView = () => import('../views/GaussianView.vue')
+const GaussianInstallView = () => import('../views/GaussianInstallView.vue')
+const GaussianInputView = () => import('../views/GaussianInputView.vue')
+const GaussianTasksView = () => import('../views/GaussianTasksView.vue')
+const GaussianOutputView = () => import('../views/GaussianOutputView.vue')
+const GaussianVaspCompareView = () => import('../views/GaussianVaspCompareView.vue')
+const GaussianParamsView = () => import('../views/GaussianParamsView.vue')
+const GaussianVisualView = () => import('../views/GaussianVisualView.vue')
+const GaussianFAQView = () => import('../views/GaussianFAQView.vue')
+const GaussianGlossaryView = () => import('../views/GaussianGlossaryView.vue')
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
@@ -38,6 +55,13 @@ const routes = [
   { path: '/errors', name: 'errors', component: ErrorsView },
   { path: '/tools', name: 'tools', component: ToolsView },
   { path: '/tools/calculator', name: 'calculator', component: CalculatorView },
+  { path: '/tools/input-generator', name: 'input-generator', component: InputGeneratorView },
+  { path: '/tools/batch-script', name: 'batch-script', component: BatchScriptView },
+  { path: '/tools/structure-viewer', name: 'structure-viewer', component: StructureViewerView },
+  { path: '/tools/case-library', name: 'case-library', component: CaseLibraryView },
+  { path: '/tools/materials-db', name: 'materials-db', component: MaterialsDBView },
+  { path: '/tools/video-tutorials', name: 'video-tutorials', component: VideoTutorialsView },
+  { path: '/tools/share-results', name: 'share-results', component: ShareResultsView },
   
   // 计算任务详情页
   { path: '/surface', name: 'surface', component: SurfaceView },
@@ -69,7 +93,21 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  }
+})
+
+// 路由守卫 - 可以在这里添加页面加载进度条等功能
+router.beforeEach((to, from, next) => {
+  // 可以在这里添加页面标题更新
+  document.title = to.name ? `${to.name} - VASP 学习平台` : 'VASP 学习平台'
+  next()
 })
 
 export default router
