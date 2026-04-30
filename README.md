@@ -1,5 +1,7 @@
 # VASP Learn - Vue 3 模块化版本
 
+> **🌐 在线访问：[https://wcg0726.github.io/vasplearn/](https://wcg0726.github.io/vasplearn/)**
+
 ## ⚠️ 免责声明
 
 **本站内容大部分由 AI 生成，仅供参考学习使用。如有疑问，请以 [VASP 官方文档](https://www.vasp.at/wiki/) 或专业教材为准。**
