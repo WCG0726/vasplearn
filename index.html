@@ -24,8 +24,25 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://vasp-learn.com">
   <meta property="og:image" content="/icons/icon-512x512.png">
-  <script type="module" crossorigin src="/vasplearn/assets/index-BSmeIEo-.js"></script>
-  <link rel="stylesheet" crossorigin href="/vasplearn/assets/index-B8nUC7Zm.css">
+
+  <!-- MathJax 数学公式支持 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+  <script type="module" crossorigin src="/vasplearn/assets/index-Bd4xWfQT.js"></script>
+  <link rel="stylesheet" crossorigin href="/vasplearn/assets/index-GJfBQWxm.css">
 </head>
 <body>
   <div id="app"></div>
